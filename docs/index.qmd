@@ -47,12 +47,8 @@ lapply(list.files(here::here("R"), full.names = TRUE), source)
 icons_fa <- icons::fontawesome
 icon_box <- icon_style(icons_fa$solid$`box-open`, fill = "#f0a800")
 icon_link <- icon_style(icons_fa$solid$link, fill = "#f0a800")
-icon_twitter <- icon_style(icons_fa$brands$twitter, fill = "#f0a800")
 icon_github <- icon_style(icons_fa$brands$github, fill = "#f0a800")
 icon_plane <- icon_style(icons_fa$solid$`paper-plane`, fill = "#f0a800")
-
-
-as_table <- function(...) knitr::kable(..., format='html', digits = 3)
 
 theme_set(
   theme_grey(base_size = 16) +
@@ -86,6 +82,8 @@ nipa <- list(red = "#c03018",
 -   Touch on the **overall** approach for methods. A large portion of my role was on software and interface design.
 
 -   Discuss **why** we needed our own method + software design decisions
+
+-   Discuss **other applications** of contact matrices outside of COVID
 
 -   Advocate for contributions of **software design + statistical thinking**: *the way of the research software engineer*, so to speak.
 
@@ -529,23 +527,23 @@ But what we needed to do is get contact matrices for a given age population stru
 ## Populations are different
 
 ```{r}
-melb_syd <- combine_abs_two_age_distributions(
-  lga_1 = "Melbourne (C)",
-  lga_2 = "Sydney (C)"
+adelaide_perth <- combine_abs_two_age_distributions(
+     lga_1 = "Adelaide (C)",
+     lga_2 = "Perth (C)"
 )
 
-plot_two_abs_distributions(melb_syd)
+plot_two_abs_distributions(adelaide_perth)
 ```
 
 ## Populations are different
 
 ```{r}
-alice_syd <- combine_abs_two_age_distributions(
-  lga_1 = "Alice Springs (T)",
-  lga_2 = "Sydney (C)"
+broome_perth <- combine_abs_two_age_distributions(
+     lga_1 = "Broome (S)",
+     lga_2 = "Perth (C)"
 )
 
-plot_two_abs_distributions(alice_syd)
+plot_two_abs_distributions(broome_perth)
 ```
 
 ## What we want
@@ -553,10 +551,10 @@ plot_two_abs_distributions(alice_syd)
 -   We want to be able use a **population age distribution**
 
 ```{r}
-#| label: fairfield
+#| label: subiaco
 #| echo: true
-fairfield <- abs_age_lga("Fairfield (C)")
-fairfield
+subiaco <- abs_age_lga("Subiaco (C)")
+subiaco
 ```
 
 ## What we want
@@ -568,7 +566,7 @@ fairfield
 #| echo: true
 
 extrapolate_from_data(
-  population = fairfield
+  population = subiaco
 )
 ```
 
@@ -578,11 +576,11 @@ extrapolate_from_data(
 
     -   It was code not written for reuse (code vs software)
 
-        -   No clear interface on how to get inputs for a given country or region.
+        -   No interface for getting inputs for a given country or region.
 
-        -   Challenging to see which bits of code matched which methods
+        -   Challenging to see which code matches which methods
 
--   Australia was in original 155 countries, not in the new updated 177!
+-   Australia in original 155 countries, but not the updated 177!
 
 ## Building our own extension
 
@@ -624,30 +622,30 @@ mgcv::bam(
 
 ```{r}
 #| echo: true
-#| label: get-fairfield
+#| label: get-subiaco
 library(conmat)
-fairfield <- abs_age_lga("Fairfield (C)")
-fairfield
+subiaco <- abs_age_lga("Subiaco (C)")
+subiaco
 ```
 
 ## Extrapolate to a new population
 
 ```{r}
-#| label: extrapolate-fairfield
+#| label: extrapolate-subiaco
 #| echo: true
-synthetic_fairfield <- extrapolate_polymod(
- population = fairfield,
- age_breaks = c(seq(0, 80, by = 5), Inf) # default
+synthetic_subiaco <- extrapolate_polymod(
+ population = subiaco,
+ age_breaks = c(seq(0, 80, by = 5), Inf)
 )
-synthetic_fairfield
+synthetic_subiaco
 ```
 
-## Contact matrix: Fairfield
+## Contact matrix: Subiaco
 
 ```{r}
-#| label: plot-matrix-fairfield
+#| label: plot-matrix-subiaco
 #| echo: true
-autoplot(synthetic_fairfield$home)
+autoplot(synthetic_subiaco$home)
 ```
 
 ```{r}
@@ -672,7 +670,8 @@ oz_pop <- abs_pop_age_lga_2020 %>%
 ```{r}
 #| label: polymod-extrapolate
 synthetic_polymod_oz <- extrapolate_polymod(
- population = oz_pop
+ population = oz_pop,
+ age_breaks = c(seq(0, 80, by = 5), Inf)
 )
 ```
 
@@ -693,14 +692,14 @@ autoplot(synthetic_polymod_oz$home)
 ## Create A Next Generation Matrix
 
 ```{r}
-#| label: generate-ngm-fairfield
+#| label: generate-ngm-subiaco
 #| echo: true
-ngm_fairfield <- generate_ngm(
-  x = synthetic_fairfield,
+ngm_subiaco <- generate_ngm(
+  x = synthetic_subiaco,
   age_breaks = c(seq(0, 80, by = 5), Inf),
   R_target = 1.5
 )
-ngm_fairfield
+ngm_subiaco
 ```
 
 ## Apply Vaccination
@@ -728,17 +727,17 @@ I think they are the average vaccine efficacy (expressed as 1 minus the relative
 ## Apply vaccination
 
 ```{r}
-#| label: apply-vaccination-fairfield
+#| label: apply-vaccination-subiaco
 #| echo: true
-ngm_vacc_fairfield <- apply_vaccination(
-  ngm = ngm_fairfield,
+ngm_vacc_subiaco <- apply_vaccination(
+  ngm = ngm_subiaco,
   data = vaccination_effect_example_data,
   coverage_col = coverage,
   acquisition_col = acquisition,
   transmission_col = transmission
 )
 
-ngm_vacc_fairfield
+ngm_vacc_subiaco
 ```
 
 ## Challenges in Design
@@ -746,26 +745,34 @@ ngm_vacc_fairfield
 -   Model fitting is fixed and rigid
     -   Although there are arguments for `age_break`
     -   You cannot change the model formula (yet)
+    -   Easy-to-use at **cost of flexibility**
 -   Design decision to provide access to fitting the model
 -   Tradeoff: **easy to use** vs **more complex to create**
 
 ```{r}
 #| eval: false
 #| echo: true
-synthetic_fairfield <- extrapolate_polymod(
- population = fairfield,
+synthetic_subiaco <- extrapolate_polymod(
+ population = subiaco,
  age_breaks = c(seq(0, 75, by = 5), Inf)
 )
 ```
 
-## Challenges in Design
+## Other applications
 
--   Rigid design means easy to use at **cost of flexibility**
--   Specified variable names is fragile, but **saves typing**
--   Extra functions could always be added to be more flexible variants
+- Could apply to other infectious diseases that socially spread
+  - e.g., RSV, Influenza
+- Could be used to evaluate impact and understand where to vaccinate.
+- Chitra Saraswati has produced already-created CSV files for >180 countries.
+
+
+## Demonstrating use in a (simple) Susceptible-Infectious-Recovered model
+
+
 
 ## Future Directions
 
+-   Allow for using smaller age groups (currently limited to 6 monthly ages)
 -   Interface to changing GAM model terms or specify model
 -   Validating against Prem and other methods
 -   Allowing more flexible uses of other data sources (Separate out the Australian focus)
@@ -870,12 +877,12 @@ fit_single_contact_model <- function(contact_data, population) {
 ## Alt approach to conmat model
 
 ```{r}
-#| label: show-fairfield
+#| label: show-subiaco
 #| echo: true
 # fit a model
 library(conmat)
-fairfield_age_pop <- abs_age_lga("Fairfield (C)")
-fairfield_age_pop
+subiaco_age_pop <- abs_age_lga("Subiaco (C)")
+subiaco_age_pop
 
 ```
 
@@ -907,13 +914,13 @@ str(setting_models)
 ```{r}
 #| label: alt-fit-3
 #| echo: true
-synthetic_settings_5y_fairfield <- predict_setting_contacts(
-  population = fairfield_age_pop,
+synthetic_settings_5y_subiaco <- predict_setting_contacts(
+  population = subiaco_age_pop,
   contact_model = setting_models,
   age_breaks = c(seq(0, 85, by = 5), Inf)
   )
 
-synthetic_settings_5y_fairfield
+synthetic_settings_5y_subiaco
 ```
 
 # **This is the last slide.**
