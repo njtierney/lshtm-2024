@@ -107,7 +107,7 @@ nipa <- list(red = "#c03018",
 
     -   Design and improve tools for EDA
 
--   **2020 - 2024**: **Research Software Engineer** \@ Telethon Kids Institute
+-   **2021 - 2024**: **Research Software Engineer** \@ Telethon Kids Institute
 
     -   Maintain and design tools for data analysis
 
@@ -312,7 +312,7 @@ include_graphics(here::here("docs/images/greta-extendable-gp.png"))
 I wanted to take a moment to talk about the dedication of this group of people. They worked tirelessly, and had been working tirelessly since March 2020. There were a heap of tight deadlines, and massive amounts of work that they graciously took on. It was a massive honour to work with all of these people.
 :::
 
-## Infectious Disease Modelling
+## Social spread of disease
 
 -   Diseases like COVID19 and Influenza spread through face to face social contact
 
@@ -440,7 +440,6 @@ ggplot(df_contact_ages,
 
 ## What do you do with a contact matrix?
 
-- Some infectious diseases are spread from contact between individuals
 - If we know **the number of times people have contact**, we can model:
     - **Which age groups** might spread COVID
     - **How many** COVID cases would get transmitted
@@ -451,7 +450,7 @@ ggplot(df_contact_ages,
 
 -   We don't. Well, not in Australia. Yet.
 
--   You need to conduct a survey where people diary the amount and manner of daily contacts they have.
+-   You need to conduct a survey where people **diary** the **amount** and **manner** of **daily** contacts they have.
 
 -   [Mossong et al](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0050074) have this for 8 countries in Europe
 
@@ -508,7 +507,7 @@ _It remains the most widely cited contact diary study_.
 ::: {.column width='50%'}
 -   One of the most widely used approaches to synthetic contact matrices
 -   Extensively applied across infectious diseases applications
--   Initially provided 155 matrices for 155 countries (177 later in 2020)
+-   Initially provided 152 matrices for 152 countries (177 later in 2020)
 :::
 :::
 
@@ -591,22 +590,23 @@ extrapolate_from_data(
 ```
 :::
 
-## How do we extend this method?
+## How do we extend Prem's method?
 
 -   [Code is provided](https://github.com/kieshaprem/synthetic-contact-matrices), but a few key issues:
 
-    -   It was code not written for reuse (code vs software)
+    -   It was code **not** written **for reuse** (code vs software)
 
         -   No interface to specify a given country/region
 
         -   Unclear which code matches which methods
+        -   Australia in original 152 countries, not in updated estimates provided in 2020.
 
--   Australia in original 155 countries, not in updated estimates.
 
+## An alternative approach
 
-## An alternative approach: `conmat`
-
-- We developed an *open-source* approach the R package `conmat`, that can be applied to any input population (big or small).
+- We developed an *open-source* approach
+- The R package `conmat`
+- It can be applied to any input population (big or small).
 
 - [github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
 
@@ -618,7 +618,7 @@ extrapolate_from_data(
 #| echo: true
 remotes::install_github("idem-lab/conmat")
 ```
-::: {.fragment}
+::: 
 
 ## Model details
 
@@ -684,12 +684,28 @@ synthetic_subiaco <- extrapolate_polymod(
 synthetic_subiaco
 ```
 
-## Contact matrix: Subiaco
+## Contact matrix: Subiaco home
 
 ```{r}
-#| label: plot-matrix-subiaco
+#| label: plot-matrix-subiaco-home
 #| echo: true
 autoplot(synthetic_subiaco$home)
+```
+
+## Contact matrix: Subiaco work
+
+```{r}
+#| label: plot-matrix-subiaco-work
+#| echo: true
+autoplot(synthetic_subiaco$work)
+```
+
+## Contact matrix: Subiaco all
+
+```{r}
+#| label: plot-matrix-subiaco-all
+#| echo: true
+autoplot(synthetic_subiaco)
 ```
 
 ```{r}
@@ -746,8 +762,6 @@ autoplot(mat_diff) +
     -   Although there are arguments for `age_break`
     -   You cannot change the model formula (yet)
     -   Easy-to-use at **cost of flexibility**
--   Design decision to provide access to fitting the model
--   Tradeoff: **easy to use** vs **more complex to create**
 
 ::: {.fragment}
 ```{r}
@@ -762,8 +776,9 @@ synthetic_subiaco <- extrapolate_polymod(
 
 ## Comment: **Software** vs **code**
 
--   Initial code was given as a [gist on github](https://gist.github.com/goldingn/85d2b7363d2da2888254bb6042144150)
--   Turning the code into a package was greatly facilitated with [sinew](https://github.com/yonicd/sinew) ([sinew code](https://github.com/njtierney/conmat/commit/48656e98b81273b90ec5c26eeec87eebd5f159ce#diff-46b25c6f5c66616a55c46eb2d3e236d1e4acc4e5b33f3dc934cabf7d1d396daa))
+-  It is great that Prem et al provided their estimates, and their code
+- **Code** describes **how** you did something
+- **Software** is designed for **reuse**
 -   [Github Issues are very useful](https://github.com/njtierney/conmat/issues?q=is%3Aissue+is%3Aclosed)
 -   Extra contributions can be implemented as [pull requests](https://github.com/njtierney/conmat/pulls?page=2&q=is%3Apr+is%3Aclosed) which can be tested with GH actions
 
@@ -772,7 +787,6 @@ synthetic_subiaco <- extrapolate_polymod(
 -   Also worked on a workflow for determining the impact of ["Test, Trace, Isolate, Quarantine" (TTIQ)](https://github.com/njtierney/ttiq-simulation)
 -   Used [targets](https://books.ropensci.org/targets/) R package to manage workflow - [file](https://github.com/njtierney/ttiq-simulation/blob/master/_targets.R)
 -   Allowed for many people to contribute to same code base (although a learning curve)
--   [Used tests, very useful for plots](https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat) with [vdiffr](https://vdiffr.r-lib.org/)
 -   [Issues](https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed) helped facilitate task delivery/discussion
 -   [Pull requests helped isolate issues](https://github.com/njtierney/ttiq-simulation/pulls?q=is%3Apr+is%3Aclosed+sort%3Acreated-asc)
 
@@ -807,8 +821,6 @@ contact_rates <- extrapolate_polymod(
     population = population,
     age_breaks = c(seq(0, 100, by = 5), Inf)
 )
-
-print(contact_rates)
 ```
 
 ## Why should I use `conmat`?
@@ -855,29 +867,20 @@ flat_contact_rates$home
 
 ## Future Directions
 
+-   Implement **other social contact diaries** beyond POLYMOD
 -   Pre compute new matrices for countries/regions
--   Demonstrate using other social contact diaries
--   Allow for using sub-yearly age groups
+-   Allow for using **sub-yearly age groups**
 -   Validating against Prem and other methods
 -   Interface to changing GAM model terms or specify model
 
 ## Conclusion
-
-::: {.incremental}
 
 * Contact matrices are frequently used in infectious diseases modelling
 * Standard Prem et. al matrices are not written for re-use
 * `conmat` provides an interface to easily generate and update models from any data source
 * Can integrate vaccination, calculate next generation matrices, and a handful of other features
 
-:::
-
-::: {.fragment}
-It's available **right now**
-
-[github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
-:::
-
+- It's available **right now**: [github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
 
 # Thanks
 
