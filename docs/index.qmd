@@ -1,22 +1,24 @@
 ---
 title: "**Extendable** projection of social contact matrices"
 subtitle: "Telethon Kids Institute"
-date: "2024-04-16"
-author: "Nicholas Tierney"
+date: "2024-04-17"
+author: "Nicholas Tierney, Michael Lydeamore, Nick Golding, Chitra Saraswati, Aarathy Babu"
 institute: Telethon Kids Institute
 format: 
   revealjs:
-    theme: [blood, extra.scss]
+    theme: [simple, extra.scss]
     incremental: true
-    slide-number: true
+    slide-number: c
     show-slide-number: all
     footer: "njtierney.github.io/conmat-tki-2024/"
+    chalkboard:
+      boardmarker-width: 5
+      buttons: true
 editor: visual
 execute: 
   echo: false
   warning: false
   cache: true
-  freeze: true
 ---
 
 ```{r}
@@ -45,8 +47,13 @@ lapply(list.files(here::here("R"), full.names = TRUE), source)
 #| include: false
 
 icons_fa <- icons::fontawesome
+icon_mastodon <- icon_style(icons_fa$brands$mastodon, fill = "#f0a800")
+icon_twitter <- icon_style(icons_fa$brands$twitter, fill = "#f0a800")
+icon_globe <- icon_style(icons_fa$solid$globe, fill = "#f0a800")
 icon_box <- icon_style(icons_fa$solid$`box-open`, fill = "#f0a800")
 icon_link <- icon_style(icons_fa$solid$link, fill = "#f0a800")
+icon_bullhorn <- icon_style(icons_fa$solid$bullhorn, fill = "#f0a800")
+# icon_twitter <- icon_style(icons_fa$brands$twitter, fill = "#f0a800")
 icon_github <- icon_style(icons_fa$brands$github, fill = "#f0a800")
 icon_plane <- icon_style(icons_fa$solid$`paper-plane`, fill = "#f0a800")
 
@@ -77,30 +84,30 @@ nipa <- list(red = "#c03018",
 
 ## What this talk is about
 
--   Explain **how** I came to help write software for infectious disease modelling
+-   **How** I wrote software for infectious disease modelling
 
 -   Touch on the **overall** approach for methods. A large portion of my role was on software and interface design.
 
--   Discuss **why** we needed our own method + software design decisions
+-   **Why** we needed our own method + software
 
--   Discuss **other applications** of contact matrices outside of COVID
+-   Discuss **applications** of contact matrices
 
--   Advocate for contributions of **software design + statistical thinking**: *the way of the research software engineer*, so to speak.
+-   Advocate for **software design + statistical thinking**: *the way of the research software engineer*.
 
 ## The story so far
 
--   2008-2012: Undergrad + honours in Psychology \@ UQ
+-   **2008-2012**: Undergrad + honours in Psychology \@ UQ
 
--   2013 - 2017: PhD Statistics \@ QUT
+-   **2013-2017**: PhD Statistics \@ QUT
 
     -   Exploratory Data Analysis (EDA)
     -   Bayesian / Geospatial statistics / Optimal placement
 
--   2018 - 2020: Research Fellow / Lecturer \@ Monash
+-   **2018 - 2020**: Research Fellow / Lecturer \@ Monash
 
     -   Design and improve tools for EDA
 
--   2020 - 2024: **Research Software Engineer** \@ Telethon Kids Institute
+-   **2020 - 2024**: **Research Software Engineer** \@ Telethon Kids Institute
 
     -   Maintain and design tools for data analysis
 
@@ -431,15 +438,14 @@ ggplot(df_contact_ages,
   theme(aspect.ratio = 1)
 ```
 
-## What do you do with this?
+## What do you do with a contact matrix?
 
--   If we know **the number of times people have contact**, we have an idea of **which age groups** might spread COVID
-
--   Simulate **how many** COVID cases would get transmitted
-
--   Explore how vaccination **reduces** transmission
-
--   Do this for **different areas** in Australia
+- Some infectious diseases are spread from contact between individuals
+- If we know **the number of times people have contact**, we can model:
+    - **Which age groups** might spread COVID
+    - **How many** COVID cases would get transmitted
+    - How vaccination **reduces** transmission
+- Do the above for **different areas** in Australia
 
 ## Do we know how much contact people have?
 
@@ -454,6 +460,14 @@ ggplot(df_contact_ages,
 ::: notes
 -   So we have a pretty good idea of the amount of contact people have in Europe.
 :::
+
+## POLYMOD
+
+Published in 2008, Mossong et. al undertook a contact diary study of 7290 participants across Europe.
+
+_It remains the most widely cited contact diary study_.
+
+![](images/mossong-combined.png)
 
 ## Method of Mossong et al
 
@@ -491,24 +505,12 @@ ggplot(df_contact_ages,
 -   Extensively applied across infectious diseases applications
 -   Initially provided 155 matrices for 155 countries (177 later in 2020)
 
-## Brief explainer of Prem
+## Creating synthetic contact matrices
 
--   $X^{L}_{i,\alpha} \sim Poisson(\mu_{i, \alpha}^{L})$
-
--   $X^{L}_{i,\alpha}$ is the number of contacts made by individual $i$ at a particular location $L$ with someone in age group $\alpha$ is modelled to be Poisson with mean $\mu_{i, \alpha}^{L}$.
-
--   the ages of individual $i$, $\alpha_i$, and their contact, $\alpha$ are broken into 5 year age intervals
-
--   $L$ is contact location: L = ...Home, Work, School, Other
-
--   Main thrust: Contact matrices are projected because the age distribution of population is included in $\mu$
-
-## Core ideas of Prem
-
--   Build a model from the POLYMOD study, predicting number of contacts
--   Incorporate key age information for different locations (home, work, school, other)
--   Extrapolate the number of contacts to different countries, using age information from those countries
--   Create a new contact matrix for a given country
+- Prem et. al formed a model that predicts the **number of contacts** based on the **age of participants** in different **settings** (Home, Work, School, Other)
+- $\text{n_contacts} \sim age_{ij} + setting_{k}$
+- This model then allows for prediction to settings that are outside the original POLYMOD countries.
+- They provide **new contact matrices** for a **given country**
 
 ##  {background-image="images/prem-dir-mats.png" background-size="contain"}
 
@@ -524,7 +526,7 @@ And maybe that doesn't matter to you if you just need to look at the contact mat
 But what we needed to do is get contact matrices for a given age population structure.
 :::
 
-## Populations are different
+## Populations are different within a country
 
 ```{r}
 adelaide_perth <- combine_abs_two_age_distributions(
@@ -535,7 +537,7 @@ adelaide_perth <- combine_abs_two_age_distributions(
 plot_two_abs_distributions(adelaide_perth)
 ```
 
-## Populations are different
+## Populations are different within a country
 
 ```{r}
 broome_perth <- combine_abs_two_age_distributions(
@@ -576,47 +578,66 @@ extrapolate_from_data(
 
     -   It was code not written for reuse (code vs software)
 
-        -   No interface for getting inputs for a given country or region.
+        -   No interface to specify a given country/region
 
-        -   Challenging to see which code matches which methods
+        -   Unclear which code matches which methods
 
--   Australia in original 155 countries, but not the updated 177!
+-   Australia in original 155 countries, not in updated estimates.
 
-## Building our own extension
 
--   Nick Golding wrote a new method that was able to be more flexible, using Generalised Additive Models (GAMs) instead of Bayesian approach.
+## An alternative approach
 
--   I was tasked with writing software from initial model fitting code, with guidance from Nick
+- We developed an *open-source* approach, that can be applied to any input population (big or small).
 
--   Named the package, `conmat`, ([repo](https://github.com/njtierney/conmat)), creating a home for code for others to contribute to.
+- You can view the package online: [github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
 
--   In R package form, this made it easier for us to develop and extend software on demand for our needs
+or install using:
 
-## How does the model work?
-
-(simplified)
-
-``` r
-mgcv::bam(
-  formula = contacts ~
-    # deviation of contact age distribution from population age distribution
-    s(age_to) +
-    # number of contacts by age
-    s(age_from) +
-    # intergenerational contact patterns - enables the off-diagonals
-    s(abs(age_from - age_to)) +
-    # interaction between intergenerational patterns and age_from, to remove
-    # ridge for some ages and settings
-    s(abs(age_from - age_to), age_from) +
-    # probabilities of both attending (any) school/work
-    school_probability +
-    work_probability +
-    offset(school_popn/work_popn),
-    family = stats::poisson,
-    # NOTE: the offset of participants allows us to get the rate per person
-    offset = log(participants)
-    )
+```{r}
+#| eval: false
+#| echo: true
+remotes::install_github("idem-lab/conmat")
 ```
+
+## Model details
+
+- These models don't have much to go on. They are trained on the number of contacts between age groups $i$ and $j$:
+
+$$\begin{aligned}
+c_{ij} = \beta_0 + \beta_1(|i-j|) + &\beta_2(|i-j|^2) + \beta_3(i\times j) + \beta_4(i+j) +\\ &\beta_5\max(i, j) + \beta_6\min(i, j)
+\end{aligned}
+$$
+
+::: {.fragment .callout-tip}
+We want to fit this as a generalised additive model, so _actually_ we have splines on these terms to satisfy the smoothness requirements. This is very similar to the approach by Prem et. al who perform post-hoc smoothing of the parameters after MCMC.
+:::
+
+## Model details
+
+* All that is needed to make predictions is the number of individuals in different age groups. 
+* This is easily obtainable information from most statistics bureaus/governments.
+
+## Data sources {.smaller}
+
+::: {.columns}
+::: {.column width='50%'}
+The `socialmixr` package has this information for most countries:
+
+```{r}
+#| echo: true
+socialmixr::wpp_age("Australia", 2015)
+```
+:::
+::: {.column width='50%' .fragment}
+And for inside Australia, `conmat` provides some ABS functions:
+
+```{r}
+#| echo: true
+conmat::abs_age_lga("Subiaco (C)")
+```
+:::
+:::
+
 
 ## Demonstration of conmat
 
@@ -683,6 +704,186 @@ synthetic_polymod_oz <- extrapolate_polymod(
 autoplot(synthetic_polymod_oz$home)
 ```
 
+## Australia vs Subiaco
+
+```{r}
+mat_diff <- synthetic_polymod_oz$home - synthetic_subiaco$home
+autoplot(mat_diff) + 
+     scale_fill_binned_diverging(
+    ) + 
+     labs(title = "Different in contacts",
+          fill = "Contact difference")
+```
+
+
+
+## Challenges in Design
+
+-   Model fitting is fixed and rigid
+    -   Although there are arguments for `age_break`
+    -   You cannot change the model formula (yet)
+    -   Easy-to-use at **cost of flexibility**
+-   Design decision to provide access to fitting the model
+-   Tradeoff: **easy to use** vs **more complex to create**
+
+```{r}
+#| eval: false
+#| echo: true
+synthetic_subiaco <- extrapolate_polymod(
+ population = subiaco,
+ age_breaks = c(seq(0, 75, by = 5), Inf)
+)
+```
+
+## Other applications
+
+- Could apply to other infectious diseases that socially spread
+  - e.g., RSV, Influenza
+- Could be used to evaluate impact and understand where to vaccinate.
+- Chitra Saraswati has produced already-created CSV files for >180 countries.
+
+## Future Directions
+
+-   Allow for using sub-yearly age groups
+-   Validating against Prem and other methods
+-   Demonstrate using other social contact diaries
+-   Interface to changing GAM model terms or specify model
+
+## Comment: Software vs code
+
+-   Initial code was given as a [gist on github](https://gist.github.com/goldingn/85d2b7363d2da2888254bb6042144150)
+-   Turning the code into a package was greatly facilitated with [sinew](https://github.com/yonicd/sinew) ([sinew code](https://github.com/njtierney/conmat/commit/48656e98b81273b90ec5c26eeec87eebd5f159ce#diff-46b25c6f5c66616a55c46eb2d3e236d1e4acc4e5b33f3dc934cabf7d1d396daa))
+-   [Github Issues are very useful](https://github.com/njtierney/conmat/issues?q=is%3Aissue+is%3Aclosed)
+-   Extra contributions can be implemented as [pull requests](https://github.com/njtierney/conmat/pulls?page=2&q=is%3Apr+is%3Aclosed) which can be tested with GH actions
+
+## Comment: Workflows
+
+-   Also worked on a workflow for determining the impact of ["Test, Trace, Isolate, Quarantine" (TTIQ)](https://github.com/njtierney/ttiq-simulation)
+-   Used [targets](https://books.ropensci.org/targets/) R package to manage workflow - [file](https://github.com/njtierney/ttiq-simulation/blob/master/_targets.R)
+-   Allowed for many people to contribute to same code base (although a learning curve)
+-   [Used tests, very useful for plots](https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat) with [vdiffr](https://vdiffr.r-lib.org/) (**example**)
+-   [Issues](https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed) helped facilitate task delivery/discussion
+-   [Pull requests helped isolate issues](https://github.com/njtierney/ttiq-simulation/pulls)
+
+## Why should I use this? It's easy!
+
+Getting a contact matrix is easy:
+
+```{r}
+world_data <- socialmixr::wpp_age()
+population <- age_population(
+    data = world_data,
+    location_col = country,
+    location = "Australia",
+    age_col = lower.age.limit,
+    year_col = year,
+    year = 2015
+)
+
+population
+```
+
+## Why should I use this?
+
+Getting a contact matrix is easy:
+
+
+```{r}
+#| cache: true
+contact_rates <- extrapolate_polymod(
+    population = population,
+    age_breaks = c(seq(0, 100, by = 5), Inf)
+)
+
+print(contact_rates)
+```
+
+## Why should I use this?
+
+```{r}
+contact_rates$home
+```
+
+## Why should I use this? You can use a custom population
+
+
+```{r}
+#| code-line-numbers: "1-6|8-15|17-20"
+flat_population_data <- tibble(
+    country = "flatland",
+    year = 2024,
+    population = 1000,
+    lower.age.limit = seq(0, 75, by=5)
+)
+
+flat_population <- age_population(
+    data = flat_population_data,
+    location_col = country,
+    location = "flatland",
+    age_col = lower.age.limit,
+    year_col = year,
+    year = 2024
+)
+
+flat_contact_rates <- extrapolate_polymod(
+    population = flat_population,
+    age_breaks = c(seq(0, 75, by=5), Inf)
+)
+```
+
+## Why should I use this? You can use a custom population
+
+```{r}
+flat_contact_rates$home
+```
+
+## Conclusion
+
+::: {.incremental}
+
+* Contact matrices are frequently used in infectious diseases modelling
+* Standard Prem et. al matrices are not written for re-use
+* `conmat` provides an interface to easily generate and update models from any data source
+* Can integrate vaccination, calculate next generation matrices, and a handful of other features
+
+:::
+
+::: {.fragment}
+And it's available **right now**
+
+[https://www.github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
+:::
+
+
+# Thanks
+
+-   Nick Golding
+-   Aarathy Babu
+-   Michael Lydeamore
+-   Chitra Saraswati
+
+# Learning more
+
+`r icon_box` [github.com/idem-lab/conmat](https://github.com/idem-lab/conmat)
+
+`r icon_bullhorn` [njtierney.github.io/conmat-tki-2024](njtierney.github.io/conmat-tki-2024)
+
+`r icon_globe` [njtierney.com](https://www.njtierney.com/)
+
+`r icon_mastodon` njtierney\@aus.social
+
+`r icon_github` njtierney
+
+`r icon_plane` nicholas.tierney\@gmail.com
+
+
+## {background-image="https://imgs.xkcd.com/comics/code_lifespan_2x.png" background-size="auto"}
+
+# **End.**
+
+# Extras
+
+
 ## Create A Next Generation Matrix
 
 -   Once infected, a person can transmit an infectious disease to another, creating **generations** of infected individuals.
@@ -739,81 +940,6 @@ ngm_vacc_subiaco <- apply_vaccination(
 
 ngm_vacc_subiaco
 ```
-
-## Challenges in Design
-
--   Model fitting is fixed and rigid
-    -   Although there are arguments for `age_break`
-    -   You cannot change the model formula (yet)
-    -   Easy-to-use at **cost of flexibility**
--   Design decision to provide access to fitting the model
--   Tradeoff: **easy to use** vs **more complex to create**
-
-```{r}
-#| eval: false
-#| echo: true
-synthetic_subiaco <- extrapolate_polymod(
- population = subiaco,
- age_breaks = c(seq(0, 75, by = 5), Inf)
-)
-```
-
-## Other applications
-
-- Could apply to other infectious diseases that socially spread
-  - e.g., RSV, Influenza
-- Could be used to evaluate impact and understand where to vaccinate.
-- Chitra Saraswati has produced already-created CSV files for >180 countries.
-
-
-## Demonstrating use in a (simple) Susceptible-Infectious-Recovered model
-
-
-
-## Future Directions
-
--   Allow for using smaller age groups (currently limited to 6 monthly ages)
--   Interface to changing GAM model terms or specify model
--   Validating against Prem and other methods
--   Allowing more flexible uses of other data sources (Separate out the Australian focus)
--   Better automatic plotting (use of `autoplot`)
-
-## Comment: Software vs code
-
--   Initial code was given as a [gist on github](https://gist.github.com/goldingn/85d2b7363d2da2888254bb6042144150)
--   Turning the code into a package was greatly facilitated with [sinew](https://github.com/yonicd/sinew) ([sinew code](https://github.com/njtierney/conmat/commit/48656e98b81273b90ec5c26eeec87eebd5f159ce#diff-46b25c6f5c66616a55c46eb2d3e236d1e4acc4e5b33f3dc934cabf7d1d396daa))
--   [Github Issues are very useful](https://github.com/njtierney/conmat/issues?q=is%3Aissue+is%3Aclosed)
--   Extra contributions can be implemented as [pull requests](https://github.com/njtierney/conmat/pulls?page=2&q=is%3Apr+is%3Aclosed) which can be tested with GH actions
-
-## Comment: Workflows
-
--   Also worked on a workflow for determining the impact of ["Test, Trace, Isolate, Quarantine" (TTIQ)](https://github.com/njtierney/ttiq-simulation)
--   Used [targets](https://books.ropensci.org/targets/) R package to manage workflow - [file](https://github.com/njtierney/ttiq-simulation/blob/master/_targets.R)
--   Allowed for many people to contribute to same code base (although a learning curve)
--   [Used tests, very useful for plots](https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat) with [vdiffr](https://vdiffr.r-lib.org/) (**example**)
--   [Issues](https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed) helped facilitate task delivery/discussion
--   [Pull requests helped isolate issues](https://github.com/njtierney/ttiq-simulation/pulls)
-
-# Thanks
-
--   Nick Golding
--   Aarathy Babu
--   Michael Lydeamore
--   Chitra Saraswati
-
-# Learning more
-
-`r icon_box` [github.com/idem-lab/conmat](https://github.com/idem-lab/conmat)
-
-`r icon_link` [njtierney.github.io/conmat-tki-2024](njtierney.github.io/conmat-tki-2024)
-
-`r icon_github` njtierney
-
-`r icon_plane` nicholas.tierney\@gmail.com
-
-# **End.**
-
-# Extras
 
 ## How does the model work?
 
@@ -923,4 +1049,32 @@ synthetic_settings_5y_subiaco <- predict_setting_contacts(
 synthetic_settings_5y_subiaco
 ```
 
+
+## In code: How does the model work?
+
+(simplified)
+
+``` r
+mgcv::bam(
+  formula = contacts ~
+    # deviation of contact age distribution from population age distribution
+    s(age_to) +
+    # number of contacts by age
+    s(age_from) +
+    # intergenerational contact patterns - enables the off-diagonals
+    s(abs(age_from - age_to)) +
+    # interaction between intergenerational patterns and age_from, to remove
+    # ridge for some ages and settings
+    s(abs(age_from - age_to), age_from) +
+    # probabilities of both attending (any) school/work
+    school_probability +
+    work_probability +
+    offset(school_popn/work_popn),
+    family = stats::poisson,
+    # NOTE: the offset of participants allows us to get the rate per person
+    offset = log(participants)
+    )
+```
+
 # **This is the last slide.**
+
