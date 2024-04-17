@@ -514,14 +514,14 @@ _It remains the most widely cited contact diary study_.
 ## Creating synthetic contact matrices
 
 ::: {.columns}
-::: {.column width='30%'}
-![](images/prem-contact-mat.png){fig-align="center"}
-:::
 ::: {.column width='70%'}
 - Prem et. al formed a model that predicts the **number of contacts** based on the **age of participants** in different **settings** (Home, Work, School, Other)
 - $\text{n_contacts} \sim age_{ij} + setting_{k}$
 - This model then allows for prediction to settings that are outside the original POLYMOD countries.
 - They provide **new contact matrices** for a **given country**
+:::
+::: {.column width='30%'}
+![](images/prem-contact-mat.png){fig-align="center"}
 :::
 :::
 
@@ -789,6 +789,8 @@ synthetic_subiaco <- extrapolate_polymod(
 -   Allowed for many people to contribute to same code base (although a learning curve)
 -   [Issues](https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed) helped facilitate task delivery/discussion
 -   [Pull requests helped isolate issues](https://github.com/njtierney/ttiq-simulation/pulls?q=is%3Apr+is%3Aclosed+sort%3Acreated-asc)
+-  [Used tests, very useful for plots](https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat) with [vdiffr](https://vdiffr.r-lib.org/) (**example**)
+
 
 # Circling back: why use `conmat`
 

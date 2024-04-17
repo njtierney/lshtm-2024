@@ -833,19 +833,19 @@ Nick  FALSE FALSE    NA</code></pre>
 <section id="creating-synthetic-contact-matrices" class="slide level2">
 <h2>Creating synthetic contact matrices</h2>
 <div class="columns">
-<div class="column" style="width:30%;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/prem-contact-mat.png" class="quarto-figure quarto-figure-center"></p>
-</figure>
-</div>
-</div><div class="column" style="width:70%;">
+<div class="column" style="width:70%;">
 <ul>
 <li class="fragment">Prem et. al formed a model that predicts the <strong>number of contacts</strong> based on the <strong>age of participants</strong> in different <strong>settings</strong> (Home, Work, School, Other)</li>
 <li class="fragment"><span class="math inline">\(\text{n_contacts} \sim age_{ij} + setting_{k}\)</span></li>
 <li class="fragment">This model then allows for prediction to settings that are outside the original POLYMOD countries.</li>
 <li class="fragment">They provide <strong>new contact matrices</strong> for a <strong>given country</strong></li>
 </ul>
+</div><div class="column" style="width:30%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/prem-contact-mat.png" class="quarto-figure quarto-figure-center"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -1174,6 +1174,7 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <li class="fragment">Allowed for many people to contribute to same code base (although a learning curve)</li>
 <li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed">Issues</a> helped facilitate task delivery/discussion</li>
 <li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/pulls?q=is%3Apr+is%3Aclosed+sort%3Acreated-asc">Pull requests helped isolate issues</a></li>
+<li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat">Used tests, very useful for plots</a> with <a href="https://vdiffr.r-lib.org/">vdiffr</a> (<strong>example</strong>)</li>
 </ul>
 </section></section>
 <section>
