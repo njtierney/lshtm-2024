@@ -885,6 +885,7 @@ Nick  FALSE FALSE    NA</code></pre>
 <ul>
 <li class="fragment">We want to be able use a <strong>population age distribution</strong></li>
 </ul>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>subiaco <span class="ot">&lt;-</span> <span class="fu">abs_age_lga</span>(<span class="st">"Subiaco (C)"</span>)</span>
 <span id="cb6-2"><a href=""></a>subiaco</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -914,16 +915,19 @@ Nick  FALSE FALSE    NA</code></pre>
 18 Subiaco (C)              85  2020        444</code></pre>
 </div>
 </div>
+</div>
 </section>
 <section id="what-we-want-1" class="slide level2">
 <h2>What we want</h2>
 <ul>
 <li class="fragment">Input <strong>population age distribution</strong> and get out a contact matrix.</li>
 </ul>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">extrapolate_from_data</span>(</span>
 <span id="cb8-2"><a href=""></a>  <span class="at">population =</span> subiaco</span>
 <span id="cb8-3"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 </section>
 <section id="how-do-we-extend-this-method" class="slide level2">
@@ -947,19 +951,23 @@ Nick  FALSE FALSE    NA</code></pre>
 <li class="fragment"><p><a href="https://www.github.com/idem-lab/conmat">github.com/idem-lab/conmat</a></p></li>
 <li class="fragment"><p>install using:</p></li>
 </ul>
+<p>::: {.fragment}</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"idem-lab/conmat"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>::: {.fragment}</p>
 </section>
 <section id="model-details" class="slide level2">
 <h2>Model details</h2>
 <ul>
 <li class="fragment">These models don’t have much to go on. They are trained on the number of contacts between age groups <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>:</li>
 </ul>
+<div class="fragment">
 <p><span class="math display">\[\begin{aligned}
 c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) + \beta_4(i+j) +\\ &amp;\beta_5\max(i, j) + \beta_6\min(i, j)
 \end{aligned}
 \]</span></p>
+</div>
 <div class="fragment">
 <div class="callout callout-tip callout-titled callout-style-default">
 <div class="callout-body">
@@ -1108,9 +1116,14 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <section id="australia-vs-subiaco" class="slide level2">
 <h2>Australia vs Subiaco</h2>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-27-1.png" width="960" class="r-stretch"></section>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-27-1.png" width="960" class="r-stretch"></section></section>
+<section>
+<section id="thoughts-on-design-software-vs-code-and-workflows" class="title-slide slide level1 center">
+<h1>Thoughts on <strong>design</strong>, <strong>software</strong> vs <strong>code</strong>, and <strong>workflows</strong></h1>
+
+</section>
 <section id="challenges-in-design" class="slide level2">
-<h2>Challenges in Design</h2>
+<h2>Challenges in <strong>Design</strong></h2>
 <ul>
 <li class="fragment">Model fitting is fixed and rigid
 <ul>
@@ -1121,35 +1134,17 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <li class="fragment">Design decision to provide access to fitting the model</li>
 <li class="fragment">Tradeoff: <strong>easy to use</strong> vs <strong>more complex to create</strong></li>
 </ul>
+<div class="fragment">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a>synthetic_subiaco <span class="ot">&lt;-</span> <span class="fu">extrapolate_polymod</span>(</span>
 <span id="cb19-2"><a href=""></a> <span class="at">population =</span> subiaco,</span>
 <span id="cb19-3"><a href=""></a> <span class="at">age_breaks =</span> <span class="fu">c</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">75</span>, <span class="at">by =</span> <span class="dv">5</span>), <span class="cn">Inf</span>)</span>
 <span id="cb19-4"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="other-applications" class="slide level2">
-<h2>Other applications</h2>
-<ul>
-<li class="fragment">Could apply to other infectious diseases that socially spread
-<ul>
-<li class="fragment">e.g., RSV, Influenza</li>
-</ul></li>
-<li class="fragment">Could be used to evaluate impact and understand where to vaccinate.</li>
-<li class="fragment">Chitra Saraswati has produced already-created CSV files for &gt;180 countries.</li>
-</ul>
-</section>
-<section id="future-directions" class="slide level2">
-<h2>Future Directions</h2>
-<ul>
-<li class="fragment">Allow for using sub-yearly age groups</li>
-<li class="fragment">Validating against Prem and other methods</li>
-<li class="fragment">Demonstrate using other social contact diaries</li>
-<li class="fragment">Interface to changing GAM model terms or specify model</li>
-</ul>
+</div>
 </section>
 <section id="comment-software-vs-code" class="slide level2">
-<h2>Comment: Software vs code</h2>
+<h2>Comment: <strong>Software</strong> vs <strong>code</strong></h2>
 <ul>
 <li class="fragment">Initial code was given as a <a href="https://gist.github.com/goldingn/85d2b7363d2da2888254bb6042144150">gist on github</a></li>
 <li class="fragment">Turning the code into a package was greatly facilitated with <a href="https://github.com/yonicd/sinew">sinew</a> (<a href="https://github.com/njtierney/conmat/commit/48656e98b81273b90ec5c26eeec87eebd5f159ce#diff-46b25c6f5c66616a55c46eb2d3e236d1e4acc4e5b33f3dc934cabf7d1d396daa">sinew code</a>)</li>
@@ -1158,18 +1153,23 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 </ul>
 </section>
 <section id="comment-workflows" class="slide level2">
-<h2>Comment: Workflows</h2>
+<h2>Comment: <strong>Workflows</strong></h2>
 <ul>
 <li class="fragment">Also worked on a workflow for determining the impact of <a href="https://github.com/njtierney/ttiq-simulation">“Test, Trace, Isolate, Quarantine” (TTIQ)</a></li>
 <li class="fragment">Used <a href="https://books.ropensci.org/targets/">targets</a> R package to manage workflow - <a href="https://github.com/njtierney/ttiq-simulation/blob/master/_targets.R">file</a></li>
 <li class="fragment">Allowed for many people to contribute to same code base (although a learning curve)</li>
-<li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat">Used tests, very useful for plots</a> with <a href="https://vdiffr.r-lib.org/">vdiffr</a> (<strong>example</strong>)</li>
+<li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat">Used tests, very useful for plots</a> with <a href="https://vdiffr.r-lib.org/">vdiffr</a></li>
 <li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed">Issues</a> helped facilitate task delivery/discussion</li>
 <li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/pulls?q=is%3Apr+is%3Aclosed+sort%3Acreated-asc">Pull requests helped isolate issues</a></li>
 </ul>
+</section></section>
+<section>
+<section id="circling-back-why-use-conmat" class="title-slide slide level1 center">
+<h1>Circling back: why use <code>conmat</code></h1>
+
 </section>
-<section id="why-should-i-use-this-its-easy" class="slide level2">
-<h2>Why should I use this? It’s easy!</h2>
+<section id="why-should-i-use-conmat-its-easy" class="slide level2">
+<h2>Why should I use <code>conmat</code>? It’s easy!</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>world_data <span class="ot">&lt;-</span> socialmixr<span class="sc">::</span><span class="fu">wpp_age</span>()</span>
 <span id="cb20-2"><a href=""></a>population <span class="ot">&lt;-</span> <span class="fu">age_population</span>(</span>
@@ -1202,8 +1202,8 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 </div>
 </div>
 </section>
-<section id="why-should-i-use-this" class="slide level2">
-<h2>Why should I use this?</h2>
+<section id="why-should-i-use-conmat" class="slide level2">
+<h2>Why should I use <code>conmat</code>?</h2>
 <p>Getting a contact matrix is easy:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>contact_rates <span class="ot">&lt;-</span> <span class="fu">extrapolate_polymod</span>(</span>
@@ -1214,8 +1214,8 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <span id="cb22-6"><a href=""></a><span class="fu">print</span>(contact_rates)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="why-should-i-use-this-1" class="slide level2">
-<h2>Why should I use this?</h2>
+<section id="why-should-i-use-conmat-1" class="slide level2">
+<h2>Why should I use <code>conmat</code>?</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>contact_rates<span class="sc">$</span>home</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1332,8 +1332,8 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 </div>
 </div>
 </section>
-<section id="why-should-i-use-this-you-can-use-a-custom-population" class="slide level2">
-<h2>Why should I use this? You can use a custom population</h2>
+<section id="why-should-i-use-conmat-you-can-use-a-custom-population" class="slide level2">
+<h2>Why should I use <code>conmat</code>? You can use a custom population</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25" data-code-line-numbers="1-6|8-15|17-20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>flat_population_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb25-2"><a href=""></a>    <span class="at">country =</span> <span class="st">"flatland"</span>,</span>
@@ -1357,8 +1357,8 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <span id="cb25-20"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="why-should-i-use-this-you-can-use-a-custom-population-1" class="slide level2">
-<h2>Why should I use this? You can use a custom population</h2>
+<section id="why-should-i-use-conmat-you-can-use-a-custom-population-1" class="slide level2">
+<h2>Why should I use <code>conmat</code>? You can use a custom population</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a>flat_contact_rates<span class="sc">$</span>home</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1415,6 +1415,16 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 [75,Inf) 0.06122924 0.09040699 0.24367777 0.41218989</code></pre>
 </div>
 </div>
+</section>
+<section id="future-directions" class="slide level2">
+<h2>Future Directions</h2>
+<ul>
+<li class="fragment">Pre compute new matrices for countries/regions</li>
+<li class="fragment">Demonstrate using other social contact diaries</li>
+<li class="fragment">Allow for using sub-yearly age groups</li>
+<li class="fragment">Validating against Prem and other methods</li>
+<li class="fragment">Interface to changing GAM model terms or specify model</li>
+</ul>
 </section>
 <section id="conclusion" class="slide level2">
 <h2>Conclusion</h2>

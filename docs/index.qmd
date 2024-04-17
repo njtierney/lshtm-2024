@@ -567,17 +567,20 @@ plot_two_abs_distributions(broome_perth)
 
 -   We want to be able use a **population age distribution**
 
+::: {.fragment}
 ```{r}
 #| label: subiaco
 #| echo: true
 subiaco <- abs_age_lga("Subiaco (C)")
 subiaco
 ```
+:::
 
 ## What we want
 
 -   Input **population age distribution** and get out a contact matrix.
 
+::: {.fragment}
 ```{r}
 #| eval: false
 #| echo: true
@@ -586,6 +589,7 @@ extrapolate_from_data(
   population = subiaco
 )
 ```
+:::
 
 ## How do we extend this method?
 
@@ -608,20 +612,24 @@ extrapolate_from_data(
 
 - install using:
 
+::: {.fragment}
 ```{r}
 #| eval: false
 #| echo: true
 remotes::install_github("idem-lab/conmat")
 ```
+::: {.fragment}
 
 ## Model details
 
 - These models don't have much to go on. They are trained on the number of contacts between age groups $i$ and $j$:
 
+::: {.fragment}
 $$\begin{aligned}
 c_{ij} = \beta_0 + \beta_1(|i-j|) + &\beta_2(|i-j|^2) + \beta_3(i\times j) + \beta_4(i+j) +\\ &\beta_5\max(i, j) + \beta_6\min(i, j)
 \end{aligned}
 $$
+:::
 
 ::: {.fragment .callout-tip}
 We want to fit this as a generalised additive model, so _actually_ we have splines on these terms to satisfy the smoothness requirements. This is very similar to the approach by Prem et. al who perform post-hoc smoothing of the parameters after MCMC.
@@ -730,9 +738,9 @@ autoplot(mat_diff) +
           fill = "Contact difference")
 ```
 
+# Thoughts on **design**, **software** vs **code**, and **workflows**
 
-
-## Challenges in Design
+## Challenges in **Design**
 
 -   Model fitting is fixed and rigid
     -   Although there are arguments for `age_break`
@@ -741,6 +749,7 @@ autoplot(mat_diff) +
 -   Design decision to provide access to fitting the model
 -   Tradeoff: **easy to use** vs **more complex to create**
 
+::: {.fragment}
 ```{r}
 #| eval: false
 #| echo: true
@@ -749,38 +758,27 @@ synthetic_subiaco <- extrapolate_polymod(
  age_breaks = c(seq(0, 75, by = 5), Inf)
 )
 ```
+::: 
 
-## Other applications
-
-- Could apply to other infectious diseases that socially spread
-  - e.g., RSV, Influenza
-- Could be used to evaluate impact and understand where to vaccinate.
-- Chitra Saraswati has produced already-created CSV files for >180 countries.
-
-## Future Directions
-
--   Allow for using sub-yearly age groups
--   Validating against Prem and other methods
--   Demonstrate using other social contact diaries
--   Interface to changing GAM model terms or specify model
-
-## Comment: Software vs code
+## Comment: **Software** vs **code**
 
 -   Initial code was given as a [gist on github](https://gist.github.com/goldingn/85d2b7363d2da2888254bb6042144150)
 -   Turning the code into a package was greatly facilitated with [sinew](https://github.com/yonicd/sinew) ([sinew code](https://github.com/njtierney/conmat/commit/48656e98b81273b90ec5c26eeec87eebd5f159ce#diff-46b25c6f5c66616a55c46eb2d3e236d1e4acc4e5b33f3dc934cabf7d1d396daa))
 -   [Github Issues are very useful](https://github.com/njtierney/conmat/issues?q=is%3Aissue+is%3Aclosed)
 -   Extra contributions can be implemented as [pull requests](https://github.com/njtierney/conmat/pulls?page=2&q=is%3Apr+is%3Aclosed) which can be tested with GH actions
 
-## Comment: Workflows
+## Comment: **Workflows**
 
 -   Also worked on a workflow for determining the impact of ["Test, Trace, Isolate, Quarantine" (TTIQ)](https://github.com/njtierney/ttiq-simulation)
 -   Used [targets](https://books.ropensci.org/targets/) R package to manage workflow - [file](https://github.com/njtierney/ttiq-simulation/blob/master/_targets.R)
 -   Allowed for many people to contribute to same code base (although a learning curve)
--   [Used tests, very useful for plots](https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat) with [vdiffr](https://vdiffr.r-lib.org/) (**example**)
+-   [Used tests, very useful for plots](https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat) with [vdiffr](https://vdiffr.r-lib.org/)
 -   [Issues](https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed) helped facilitate task delivery/discussion
 -   [Pull requests helped isolate issues](https://github.com/njtierney/ttiq-simulation/pulls?q=is%3Apr+is%3Aclosed+sort%3Acreated-asc)
 
-## Why should I use this? It's easy!
+# Circling back: why use `conmat`
+
+## Why should I use `conmat`? It's easy!
 
 ```{r}
 #| echo: true
@@ -797,7 +795,7 @@ population <- age_population(
 population
 ```
 
-## Why should I use this?
+## Why should I use `conmat`?
 
 Getting a contact matrix is easy:
 
@@ -813,14 +811,14 @@ contact_rates <- extrapolate_polymod(
 print(contact_rates)
 ```
 
-## Why should I use this?
+## Why should I use `conmat`?
 
 ```{r}
 #| echo: true
 contact_rates$home
 ```
 
-## Why should I use this? You can use a custom population
+## Why should I use `conmat`? You can use a custom population
 
 
 ```{r}
@@ -848,12 +846,20 @@ flat_contact_rates <- extrapolate_polymod(
 )
 ```
 
-## Why should I use this? You can use a custom population
+## Why should I use `conmat`? You can use a custom population
 
 ```{r}
 #| echo: true
 flat_contact_rates$home
 ```
+
+## Future Directions
+
+-   Pre compute new matrices for countries/regions
+-   Demonstrate using other social contact diaries
+-   Allow for using sub-yearly age groups
+-   Validating against Prem and other methods
+-   Interface to changing GAM model terms or specify model
 
 ## Conclusion
 
