@@ -451,7 +451,7 @@ ggplot(df_contact_ages,
 
 -   We don't. Well, not in Australia. Yet.
 
--   You need to conduct a surveys where people diary the amount and manner of daily contacts they have.
+-   You need to conduct a survey where people diary the amount and manner of daily contacts they have.
 
 -   [Mossong et al](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0050074) have this for 8 countries in Europe
 
@@ -499,18 +499,33 @@ _It remains the most widely cited contact diary study_.
 -   Use setting-specific survey data on household, school, classroom, and workplace composition
 -   Combine with empirical data on contact patterns in Europe using statistical models
 
-## Prem et al
+## Prem et al 
 
--   Prem et al. have one of the most widely used approaches to synthetic contact matrices
+::: {.columns}
+::: {.column width='50%'}
+![](images/prem-paper-fig.png){fig-align="center"}
+:::
+::: {.column width='50%'}
+-   One of the most widely used approaches to synthetic contact matrices
 -   Extensively applied across infectious diseases applications
 -   Initially provided 155 matrices for 155 countries (177 later in 2020)
+:::
+:::
 
 ## Creating synthetic contact matrices
 
+::: {.columns}
+::: {.column width='30%'}
+![](images/prem-contact-mat.png){fig-align="center"}
+:::
+::: {.column width='70%'}
 - Prem et. al formed a model that predicts the **number of contacts** based on the **age of participants** in different **settings** (Home, Work, School, Other)
 - $\text{n_contacts} \sim age_{ij} + setting_{k}$
 - This model then allows for prediction to settings that are outside the original POLYMOD countries.
 - They provide **new contact matrices** for a **given country**
+:::
+:::
+
 
 ##  {background-image="images/prem-dir-mats.png" background-size="contain"}
 
@@ -585,13 +600,13 @@ extrapolate_from_data(
 -   Australia in original 155 countries, not in updated estimates.
 
 
-## An alternative approach
+## An alternative approach: `conmat`
 
-- We developed an *open-source* approach, that can be applied to any input population (big or small).
+- We developed an *open-source* approach the R package `conmat`, that can be applied to any input population (big or small).
 
-- You can view the package online: [github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
+- [github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
 
-or install using:
+- install using:
 
 ```{r}
 #| eval: false
@@ -763,13 +778,12 @@ synthetic_subiaco <- extrapolate_polymod(
 -   Allowed for many people to contribute to same code base (although a learning curve)
 -   [Used tests, very useful for plots](https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat) with [vdiffr](https://vdiffr.r-lib.org/) (**example**)
 -   [Issues](https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed) helped facilitate task delivery/discussion
--   [Pull requests helped isolate issues](https://github.com/njtierney/ttiq-simulation/pulls)
+-   [Pull requests helped isolate issues](https://github.com/njtierney/ttiq-simulation/pulls?q=is%3Apr+is%3Aclosed+sort%3Acreated-asc)
 
 ## Why should I use this? It's easy!
 
-Getting a contact matrix is easy:
-
 ```{r}
+#| echo: true
 world_data <- socialmixr::wpp_age()
 population <- age_population(
     data = world_data,
@@ -790,6 +804,7 @@ Getting a contact matrix is easy:
 
 ```{r}
 #| cache: true
+#| echo: true
 contact_rates <- extrapolate_polymod(
     population = population,
     age_breaks = c(seq(0, 100, by = 5), Inf)
@@ -801,6 +816,7 @@ print(contact_rates)
 ## Why should I use this?
 
 ```{r}
+#| echo: true
 contact_rates$home
 ```
 
@@ -809,6 +825,7 @@ contact_rates$home
 
 ```{r}
 #| code-line-numbers: "1-6|8-15|17-20"
+#| echo: true
 flat_population_data <- tibble(
     country = "flatland",
     year = 2024,
@@ -834,6 +851,7 @@ flat_contact_rates <- extrapolate_polymod(
 ## Why should I use this? You can use a custom population
 
 ```{r}
+#| echo: true
 flat_contact_rates$home
 ```
 
@@ -849,9 +867,9 @@ flat_contact_rates$home
 :::
 
 ::: {.fragment}
-And it's available **right now**
+It's available **right now**
 
-[https://www.github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
+[github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
 :::
 
 

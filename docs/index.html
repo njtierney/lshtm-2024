@@ -743,7 +743,7 @@ Nick  FALSE FALSE    NA</code></pre>
 <h2>Do we know how much contact people have?</h2>
 <ul>
 <li class="fragment"><p>We don’t. Well, not in Australia. Yet.</p></li>
-<li class="fragment"><p>You need to conduct a surveys where people diary the amount and manner of daily contacts they have.</p></li>
+<li class="fragment"><p>You need to conduct a survey where people diary the amount and manner of daily contacts they have.</p></li>
 <li class="fragment"><p><a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0050074">Mossong et al</a> have this for 8 countries in Europe</p></li>
 <li class="fragment"><p>Referred to as the <strong>POLYMOD</strong> study</p></li>
 </ul>
@@ -815,20 +815,40 @@ Nick  FALSE FALSE    NA</code></pre>
 </section>
 <section id="prem-et-al" class="slide level2">
 <h2>Prem et al</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/prem-paper-fig.png" class="quarto-figure quarto-figure-center"></p>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
 <ul>
-<li class="fragment">Prem et al.&nbsp;have one of the most widely used approaches to synthetic contact matrices</li>
+<li class="fragment">One of the most widely used approaches to synthetic contact matrices</li>
 <li class="fragment">Extensively applied across infectious diseases applications</li>
 <li class="fragment">Initially provided 155 matrices for 155 countries (177 later in 2020)</li>
 </ul>
+</div>
+</div>
 </section>
 <section id="creating-synthetic-contact-matrices" class="slide level2">
 <h2>Creating synthetic contact matrices</h2>
+<div class="columns">
+<div class="column" style="width:30%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/prem-contact-mat.png" class="quarto-figure quarto-figure-center"></p>
+</figure>
+</div>
+</div><div class="column" style="width:70%;">
 <ul>
 <li class="fragment">Prem et. al formed a model that predicts the <strong>number of contacts</strong> based on the <strong>age of participants</strong> in different <strong>settings</strong> (Home, Work, School, Other)</li>
 <li class="fragment"><span class="math inline">\(\text{n_contacts} \sim age_{ij} + setting_{k}\)</span></li>
 <li class="fragment">This model then allows for prediction to settings that are outside the original POLYMOD countries.</li>
 <li class="fragment">They provide <strong>new contact matrices</strong> for a <strong>given country</strong></li>
 </ul>
+</div>
+</div>
 </section>
 <section id="section-1" class="slide level2" data-background-image="images/prem-dir-mats.png" data-background-size="contain">
 <h2></h2>
@@ -920,13 +940,13 @@ Nick  FALSE FALSE    NA</code></pre>
 <li class="fragment"><p>Australia in original 155 countries, not in updated estimates.</p></li>
 </ul>
 </section>
-<section id="an-alternative-approach" class="slide level2">
-<h2>An alternative approach</h2>
+<section id="an-alternative-approach-conmat" class="slide level2">
+<h2>An alternative approach: <code>conmat</code></h2>
 <ul>
-<li class="fragment"><p>We developed an <em>open-source</em> approach, that can be applied to any input population (big or small).</p></li>
-<li class="fragment"><p>You can view the package online: <a href="https://www.github.com/idem-lab/conmat">github.com/idem-lab/conmat</a></p></li>
+<li class="fragment"><p>We developed an <em>open-source</em> approach the R package <code>conmat</code>, that can be applied to any input population (big or small).</p></li>
+<li class="fragment"><p><a href="https://www.github.com/idem-lab/conmat">github.com/idem-lab/conmat</a></p></li>
+<li class="fragment"><p>install using:</p></li>
 </ul>
-<p>or install using:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"idem-lab/conmat"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1145,13 +1165,23 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <li class="fragment">Allowed for many people to contribute to same code base (although a learning curve)</li>
 <li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat">Used tests, very useful for plots</a> with <a href="https://vdiffr.r-lib.org/">vdiffr</a> (<strong>example</strong>)</li>
 <li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed">Issues</a> helped facilitate task delivery/discussion</li>
-<li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/pulls">Pull requests helped isolate issues</a></li>
+<li class="fragment"><a href="https://github.com/njtierney/ttiq-simulation/pulls?q=is%3Apr+is%3Aclosed+sort%3Acreated-asc">Pull requests helped isolate issues</a></li>
 </ul>
 </section>
 <section id="why-should-i-use-this-its-easy" class="slide level2">
 <h2>Why should I use this? It’s easy!</h2>
-<p>Getting a contact matrix is easy:</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>world_data <span class="ot">&lt;-</span> socialmixr<span class="sc">::</span><span class="fu">wpp_age</span>()</span>
+<span id="cb20-2"><a href=""></a>population <span class="ot">&lt;-</span> <span class="fu">age_population</span>(</span>
+<span id="cb20-3"><a href=""></a>    <span class="at">data =</span> world_data,</span>
+<span id="cb20-4"><a href=""></a>    <span class="at">location_col =</span> country,</span>
+<span id="cb20-5"><a href=""></a>    <span class="at">location =</span> <span class="st">"Australia"</span>,</span>
+<span id="cb20-6"><a href=""></a>    <span class="at">age_col =</span> lower.age.limit,</span>
+<span id="cb20-7"><a href=""></a>    <span class="at">year_col =</span> year,</span>
+<span id="cb20-8"><a href=""></a>    <span class="at">year =</span> <span class="dv">2015</span></span>
+<span id="cb20-9"><a href=""></a>)</span>
+<span id="cb20-10"><a href=""></a></span>
+<span id="cb20-11"><a href=""></a>population</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 21 × 5 (conmat_population)
  - age: lower.age.limit
@@ -1175,10 +1205,19 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <section id="why-should-i-use-this" class="slide level2">
 <h2>Why should I use this?</h2>
 <p>Getting a contact matrix is easy:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>contact_rates <span class="ot">&lt;-</span> <span class="fu">extrapolate_polymod</span>(</span>
+<span id="cb22-2"><a href=""></a>    <span class="at">population =</span> population,</span>
+<span id="cb22-3"><a href=""></a>    <span class="at">age_breaks =</span> <span class="fu">c</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">by =</span> <span class="dv">5</span>), <span class="cn">Inf</span>)</span>
+<span id="cb22-4"><a href=""></a>)</span>
+<span id="cb22-5"><a href=""></a></span>
+<span id="cb22-6"><a href=""></a><span class="fu">print</span>(contact_rates)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="why-should-i-use-this-1" class="slide level2">
 <h2>Why should I use this?</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>contact_rates<span class="sc">$</span>home</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 [0,5)       [5,10)      [10,15)      [15,20)      [20,25)
 [0,5)     5.802591e-01 4.813549e-01 2.402471e-01 1.620169e-01 2.321232e-01
@@ -1295,10 +1334,33 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 </section>
 <section id="why-should-i-use-this-you-can-use-a-custom-population" class="slide level2">
 <h2>Why should I use this? You can use a custom population</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25" data-code-line-numbers="1-6|8-15|17-20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>flat_population_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb25-2"><a href=""></a>    <span class="at">country =</span> <span class="st">"flatland"</span>,</span>
+<span id="cb25-3"><a href=""></a>    <span class="at">year =</span> <span class="dv">2024</span>,</span>
+<span id="cb25-4"><a href=""></a>    <span class="at">population =</span> <span class="dv">1000</span>,</span>
+<span id="cb25-5"><a href=""></a>    <span class="at">lower.age.limit =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">75</span>, <span class="at">by=</span><span class="dv">5</span>)</span>
+<span id="cb25-6"><a href=""></a>)</span>
+<span id="cb25-7"><a href=""></a></span>
+<span id="cb25-8"><a href=""></a>flat_population <span class="ot">&lt;-</span> <span class="fu">age_population</span>(</span>
+<span id="cb25-9"><a href=""></a>    <span class="at">data =</span> flat_population_data,</span>
+<span id="cb25-10"><a href=""></a>    <span class="at">location_col =</span> country,</span>
+<span id="cb25-11"><a href=""></a>    <span class="at">location =</span> <span class="st">"flatland"</span>,</span>
+<span id="cb25-12"><a href=""></a>    <span class="at">age_col =</span> lower.age.limit,</span>
+<span id="cb25-13"><a href=""></a>    <span class="at">year_col =</span> year,</span>
+<span id="cb25-14"><a href=""></a>    <span class="at">year =</span> <span class="dv">2024</span></span>
+<span id="cb25-15"><a href=""></a>)</span>
+<span id="cb25-16"><a href=""></a></span>
+<span id="cb25-17"><a href=""></a>flat_contact_rates <span class="ot">&lt;-</span> <span class="fu">extrapolate_polymod</span>(</span>
+<span id="cb25-18"><a href=""></a>    <span class="at">population =</span> flat_population,</span>
+<span id="cb25-19"><a href=""></a>    <span class="at">age_breaks =</span> <span class="fu">c</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">75</span>, <span class="at">by=</span><span class="dv">5</span>), <span class="cn">Inf</span>)</span>
+<span id="cb25-20"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="why-should-i-use-this-you-can-use-a-custom-population-1" class="slide level2">
 <h2>Why should I use this? You can use a custom population</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a>flat_contact_rates<span class="sc">$</span>home</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              [0,5)     [5,10)    [10,15)    [15,20)    [20,25)    [25,30)
 [0,5)    0.56828986 0.47107930 0.23528412 0.15828319 0.22562515 0.42964988
@@ -1365,8 +1427,8 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 </ul>
 </div>
 <div class="fragment">
-<p>And it’s available <strong>right now</strong></p>
-<p><a href="https://www.github.com/idem-lab/conmat">https://www.github.com/idem-lab/conmat</a></p>
+<p>It’s available <strong>right now</strong></p>
+<p><a href="https://www.github.com/idem-lab/conmat">github.com/idem-lab/conmat</a></p>
 </div>
 </section></section>
 <section id="thanks" class="title-slide slide level1 center">
@@ -1413,12 +1475,12 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <section id="create-a-next-generation-matrix-1" class="slide level2">
 <h2>Create A Next Generation Matrix</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>ngm_subiaco <span class="ot">&lt;-</span> <span class="fu">generate_ngm</span>(</span>
-<span id="cb23-2"><a href=""></a>  <span class="at">x =</span> synthetic_subiaco,</span>
-<span id="cb23-3"><a href=""></a>  <span class="at">age_breaks =</span> <span class="fu">c</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">80</span>, <span class="at">by =</span> <span class="dv">5</span>), <span class="cn">Inf</span>),</span>
-<span id="cb23-4"><a href=""></a>  <span class="at">R_target =</span> <span class="fl">1.5</span></span>
-<span id="cb23-5"><a href=""></a>)</span>
-<span id="cb23-6"><a href=""></a>ngm_subiaco</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a>ngm_subiaco <span class="ot">&lt;-</span> <span class="fu">generate_ngm</span>(</span>
+<span id="cb28-2"><a href=""></a>  <span class="at">x =</span> synthetic_subiaco,</span>
+<span id="cb28-3"><a href=""></a>  <span class="at">age_breaks =</span> <span class="fu">c</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">80</span>, <span class="at">by =</span> <span class="dv">5</span>), <span class="cn">Inf</span>),</span>
+<span id="cb28-4"><a href=""></a>  <span class="at">R_target =</span> <span class="fl">1.5</span></span>
+<span id="cb28-5"><a href=""></a>)</span>
+<span id="cb28-6"><a href=""></a>ngm_subiaco</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="apply-vaccination" class="slide level2">
@@ -1436,7 +1498,7 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <section id="example-vaccination-data" class="slide level2">
 <h2>Example vaccination data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a>vaccination_effect_example_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a>vaccination_effect_example_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 17 × 4
    age_band coverage acquisition transmission
@@ -1477,81 +1539,81 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <section id="apply-vaccination-1" class="slide level2">
 <h2>Apply vaccination</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a>ngm_vacc_subiaco <span class="ot">&lt;-</span> <span class="fu">apply_vaccination</span>(</span>
-<span id="cb26-2"><a href=""></a>  <span class="at">ngm =</span> ngm_subiaco,</span>
-<span id="cb26-3"><a href=""></a>  <span class="at">data =</span> vaccination_effect_example_data,</span>
-<span id="cb26-4"><a href=""></a>  <span class="at">coverage_col =</span> coverage,</span>
-<span id="cb26-5"><a href=""></a>  <span class="at">acquisition_col =</span> acquisition,</span>
-<span id="cb26-6"><a href=""></a>  <span class="at">transmission_col =</span> transmission</span>
-<span id="cb26-7"><a href=""></a>)</span>
-<span id="cb26-8"><a href=""></a></span>
-<span id="cb26-9"><a href=""></a>ngm_vacc_subiaco</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a>ngm_vacc_subiaco <span class="ot">&lt;-</span> <span class="fu">apply_vaccination</span>(</span>
+<span id="cb31-2"><a href=""></a>  <span class="at">ngm =</span> ngm_subiaco,</span>
+<span id="cb31-3"><a href=""></a>  <span class="at">data =</span> vaccination_effect_example_data,</span>
+<span id="cb31-4"><a href=""></a>  <span class="at">coverage_col =</span> coverage,</span>
+<span id="cb31-5"><a href=""></a>  <span class="at">acquisition_col =</span> acquisition,</span>
+<span id="cb31-6"><a href=""></a>  <span class="at">transmission_col =</span> transmission</span>
+<span id="cb31-7"><a href=""></a>)</span>
+<span id="cb31-8"><a href=""></a></span>
+<span id="cb31-9"><a href=""></a>ngm_vacc_subiaco</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="how-does-the-model-work" class="slide level2">
 <h2>How does the model work?</h2>
-<div class="sourceCode" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>fit_single_contact_model <span class="ot">&lt;-</span> <span class="cf">function</span>(contact_data, population) {</span>
-<span id="cb27-2"><a href=""></a></span>
-<span id="cb27-3"><a href=""></a>  <span class="co"># programatically add the offset term to the formula, so the model defines</span></span>
-<span id="cb27-4"><a href=""></a>  <span class="co"># information about the setting, without us having to pass it through to the</span></span>
-<span id="cb27-5"><a href=""></a>  <span class="co"># prediction data</span></span>
-<span id="cb27-6"><a href=""></a>  formula_no_offset <span class="ot">&lt;-</span> contacts <span class="sc">~</span></span>
-<span id="cb27-7"><a href=""></a>    <span class="co"># deviation of contact age distribution from population age distribution</span></span>
-<span id="cb27-8"><a href=""></a>    <span class="fu">s</span>(age_to) <span class="sc">+</span></span>
-<span id="cb27-9"><a href=""></a>    <span class="co"># number of contacts by age</span></span>
-<span id="cb27-10"><a href=""></a>    <span class="fu">s</span>(age_from) <span class="sc">+</span></span>
-<span id="cb27-11"><a href=""></a>    <span class="co"># intergenerational contact patterns - enables the off-diagonals</span></span>
-<span id="cb27-12"><a href=""></a>    <span class="fu">s</span>(<span class="fu">abs</span>(age_from <span class="sc">-</span> age_to)) <span class="sc">+</span></span>
-<span id="cb27-13"><a href=""></a>    <span class="co"># interaction between intergenerational patterns and age_from, to remove</span></span>
-<span id="cb27-14"><a href=""></a>    <span class="co"># ridge for some ages and settings</span></span>
-<span id="cb27-15"><a href=""></a>    <span class="fu">s</span>(<span class="fu">abs</span>(age_from <span class="sc">-</span> age_to), age_from) <span class="sc">+</span></span>
-<span id="cb27-16"><a href=""></a>    <span class="co"># probabilities of both attending (any) school/work</span></span>
-<span id="cb27-17"><a href=""></a>    school_probability <span class="sc">+</span></span>
-<span id="cb27-18"><a href=""></a>    work_probability</span>
-<span id="cb27-19"><a href=""></a>  </span>
-<span id="cb27-20"><a href=""></a>  <span class="co"># choose the offset variable based on the setting</span></span>
-<span id="cb27-21"><a href=""></a>  setting <span class="ot">&lt;-</span> contact_data<span class="sc">$</span>setting[<span class="dv">1</span>]</span>
-<span id="cb27-22"><a href=""></a>  offset_variable <span class="ot">&lt;-</span> <span class="cf">switch</span>(</span>
-<span id="cb27-23"><a href=""></a>    setting,</span>
-<span id="cb27-24"><a href=""></a>    <span class="at">school =</span> <span class="st">"log_contactable_population_school"</span>,</span>
-<span id="cb27-25"><a href=""></a>    <span class="st">"log_contactable_population"</span></span>
-<span id="cb27-26"><a href=""></a>  )</span>
-<span id="cb27-27"><a href=""></a>  </span>
-<span id="cb27-28"><a href=""></a>  <span class="co"># add multiplicative offset for population contactable, to enable</span></span>
-<span id="cb27-29"><a href=""></a>  <span class="co"># extrapolation to new demographies</span></span>
-<span id="cb27-30"><a href=""></a>  <span class="co"># in mgcv, this part of the offset gets used in prediction, which </span></span>
-<span id="cb27-31"><a href=""></a>  <span class="co"># is what we want. Those are the "contactable" parts, which we use</span></span>
-<span id="cb27-32"><a href=""></a>  <span class="co"># to extrapolate to new demographics.</span></span>
-<span id="cb27-33"><a href=""></a>  formula_offset <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"~. + offset(%s)"</span>, offset_variable)</span>
-<span id="cb27-34"><a href=""></a>  formula <span class="ot">&lt;-</span> <span class="fu">update</span>(formula_no_offset, formula_offset)</span>
-<span id="cb27-35"><a href=""></a>  </span>
-<span id="cb27-36"><a href=""></a>  <span class="co"># contact model for all locations together</span></span>
-<span id="cb27-37"><a href=""></a>  contact_data <span class="sc">%&gt;%</span></span>
-<span id="cb27-38"><a href=""></a>    <span class="fu">add_modelling_features</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb27-39"><a href=""></a>      <span class="co"># The modelling features added here are:</span></span>
-<span id="cb27-40"><a href=""></a>        <span class="co"># the school and work offsets</span></span>
-<span id="cb27-41"><a href=""></a>        <span class="co"># pop_age_to (interpolated population)</span></span>
-<span id="cb27-42"><a href=""></a>        <span class="co"># `log_contactable_population_school`, and ` log_contactable_population`</span></span>
-<span id="cb27-43"><a href=""></a>      population <span class="ot">=</span> population</span>
-<span id="cb27-44"><a href=""></a>    mgcv<span class="sc">::</span><span class="fu">bam</span>(</span>
-<span id="cb27-45"><a href=""></a>      <span class="at">formula =</span> formula,</span>
-<span id="cb27-46"><a href=""></a>      <span class="at">family =</span> stats<span class="sc">::</span>poisson,</span>
-<span id="cb27-47"><a href=""></a>      <span class="co"># add number of participants as a multilpicative offset here rather than in</span></span>
-<span id="cb27-48"><a href=""></a>      <span class="co"># the formula, so it is not needed for prediction,</span></span>
-<span id="cb27-49"><a href=""></a>      <span class="co"># </span><span class="al">NOTE</span><span class="co">: the offset of participants allows us to get the rate per person</span></span>
-<span id="cb27-50"><a href=""></a>      <span class="at">offset =</span> <span class="fu">log</span>(participants),</span>
-<span id="cb27-51"><a href=""></a>      <span class="at">data =</span> .</span>
-<span id="cb27-52"><a href=""></a>    )</span>
-<span id="cb27-53"><a href=""></a>  </span>
-<span id="cb27-54"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href=""></a>fit_single_contact_model <span class="ot">&lt;-</span> <span class="cf">function</span>(contact_data, population) {</span>
+<span id="cb32-2"><a href=""></a></span>
+<span id="cb32-3"><a href=""></a>  <span class="co"># programatically add the offset term to the formula, so the model defines</span></span>
+<span id="cb32-4"><a href=""></a>  <span class="co"># information about the setting, without us having to pass it through to the</span></span>
+<span id="cb32-5"><a href=""></a>  <span class="co"># prediction data</span></span>
+<span id="cb32-6"><a href=""></a>  formula_no_offset <span class="ot">&lt;-</span> contacts <span class="sc">~</span></span>
+<span id="cb32-7"><a href=""></a>    <span class="co"># deviation of contact age distribution from population age distribution</span></span>
+<span id="cb32-8"><a href=""></a>    <span class="fu">s</span>(age_to) <span class="sc">+</span></span>
+<span id="cb32-9"><a href=""></a>    <span class="co"># number of contacts by age</span></span>
+<span id="cb32-10"><a href=""></a>    <span class="fu">s</span>(age_from) <span class="sc">+</span></span>
+<span id="cb32-11"><a href=""></a>    <span class="co"># intergenerational contact patterns - enables the off-diagonals</span></span>
+<span id="cb32-12"><a href=""></a>    <span class="fu">s</span>(<span class="fu">abs</span>(age_from <span class="sc">-</span> age_to)) <span class="sc">+</span></span>
+<span id="cb32-13"><a href=""></a>    <span class="co"># interaction between intergenerational patterns and age_from, to remove</span></span>
+<span id="cb32-14"><a href=""></a>    <span class="co"># ridge for some ages and settings</span></span>
+<span id="cb32-15"><a href=""></a>    <span class="fu">s</span>(<span class="fu">abs</span>(age_from <span class="sc">-</span> age_to), age_from) <span class="sc">+</span></span>
+<span id="cb32-16"><a href=""></a>    <span class="co"># probabilities of both attending (any) school/work</span></span>
+<span id="cb32-17"><a href=""></a>    school_probability <span class="sc">+</span></span>
+<span id="cb32-18"><a href=""></a>    work_probability</span>
+<span id="cb32-19"><a href=""></a>  </span>
+<span id="cb32-20"><a href=""></a>  <span class="co"># choose the offset variable based on the setting</span></span>
+<span id="cb32-21"><a href=""></a>  setting <span class="ot">&lt;-</span> contact_data<span class="sc">$</span>setting[<span class="dv">1</span>]</span>
+<span id="cb32-22"><a href=""></a>  offset_variable <span class="ot">&lt;-</span> <span class="cf">switch</span>(</span>
+<span id="cb32-23"><a href=""></a>    setting,</span>
+<span id="cb32-24"><a href=""></a>    <span class="at">school =</span> <span class="st">"log_contactable_population_school"</span>,</span>
+<span id="cb32-25"><a href=""></a>    <span class="st">"log_contactable_population"</span></span>
+<span id="cb32-26"><a href=""></a>  )</span>
+<span id="cb32-27"><a href=""></a>  </span>
+<span id="cb32-28"><a href=""></a>  <span class="co"># add multiplicative offset for population contactable, to enable</span></span>
+<span id="cb32-29"><a href=""></a>  <span class="co"># extrapolation to new demographies</span></span>
+<span id="cb32-30"><a href=""></a>  <span class="co"># in mgcv, this part of the offset gets used in prediction, which </span></span>
+<span id="cb32-31"><a href=""></a>  <span class="co"># is what we want. Those are the "contactable" parts, which we use</span></span>
+<span id="cb32-32"><a href=""></a>  <span class="co"># to extrapolate to new demographics.</span></span>
+<span id="cb32-33"><a href=""></a>  formula_offset <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"~. + offset(%s)"</span>, offset_variable)</span>
+<span id="cb32-34"><a href=""></a>  formula <span class="ot">&lt;-</span> <span class="fu">update</span>(formula_no_offset, formula_offset)</span>
+<span id="cb32-35"><a href=""></a>  </span>
+<span id="cb32-36"><a href=""></a>  <span class="co"># contact model for all locations together</span></span>
+<span id="cb32-37"><a href=""></a>  contact_data <span class="sc">%&gt;%</span></span>
+<span id="cb32-38"><a href=""></a>    <span class="fu">add_modelling_features</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb32-39"><a href=""></a>      <span class="co"># The modelling features added here are:</span></span>
+<span id="cb32-40"><a href=""></a>        <span class="co"># the school and work offsets</span></span>
+<span id="cb32-41"><a href=""></a>        <span class="co"># pop_age_to (interpolated population)</span></span>
+<span id="cb32-42"><a href=""></a>        <span class="co"># `log_contactable_population_school`, and ` log_contactable_population`</span></span>
+<span id="cb32-43"><a href=""></a>      population <span class="ot">=</span> population</span>
+<span id="cb32-44"><a href=""></a>    mgcv<span class="sc">::</span><span class="fu">bam</span>(</span>
+<span id="cb32-45"><a href=""></a>      <span class="at">formula =</span> formula,</span>
+<span id="cb32-46"><a href=""></a>      <span class="at">family =</span> stats<span class="sc">::</span>poisson,</span>
+<span id="cb32-47"><a href=""></a>      <span class="co"># add number of participants as a multilpicative offset here rather than in</span></span>
+<span id="cb32-48"><a href=""></a>      <span class="co"># the formula, so it is not needed for prediction,</span></span>
+<span id="cb32-49"><a href=""></a>      <span class="co"># </span><span class="al">NOTE</span><span class="co">: the offset of participants allows us to get the rate per person</span></span>
+<span id="cb32-50"><a href=""></a>      <span class="at">offset =</span> <span class="fu">log</span>(participants),</span>
+<span id="cb32-51"><a href=""></a>      <span class="at">data =</span> .</span>
+<span id="cb32-52"><a href=""></a>    )</span>
+<span id="cb32-53"><a href=""></a>  </span>
+<span id="cb32-54"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="alt-approach-to-conmat-model" class="slide level2">
 <h2>Alt approach to conmat model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a><span class="co"># fit a model</span></span>
-<span id="cb28-2"><a href=""></a><span class="fu">library</span>(conmat)</span>
-<span id="cb28-3"><a href=""></a>subiaco_age_pop <span class="ot">&lt;-</span> <span class="fu">abs_age_lga</span>(<span class="st">"Subiaco (C)"</span>)</span>
-<span id="cb28-4"><a href=""></a>subiaco_age_pop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a><span class="co"># fit a model</span></span>
+<span id="cb33-2"><a href=""></a><span class="fu">library</span>(conmat)</span>
+<span id="cb33-3"><a href=""></a>subiaco_age_pop <span class="ot">&lt;-</span> <span class="fu">abs_age_lga</span>(<span class="st">"Subiaco (C)"</span>)</span>
+<span id="cb33-4"><a href=""></a>subiaco_age_pop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 18 × 4 (conmat_population)
  - age: lower.age.limit
@@ -1582,19 +1644,19 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <section id="alt-approach-to-conmat-model-1" class="slide level2">
 <h2>Alt approach to conmat model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a>polymod_contact_data <span class="ot">&lt;-</span> <span class="fu">get_polymod_setting_data</span>()</span>
-<span id="cb30-2"><a href=""></a>polymod_survey_data <span class="ot">&lt;-</span> <span class="fu">get_polymod_population</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a>polymod_contact_data <span class="ot">&lt;-</span> <span class="fu">get_polymod_setting_data</span>()</span>
+<span id="cb35-2"><a href=""></a>polymod_survey_data <span class="ot">&lt;-</span> <span class="fu">get_polymod_population</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="alt-approach-to-conmat-model-2" class="slide level2">
 <h2>Alt approach to conmat model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a>setting_models <span class="ot">&lt;-</span> <span class="fu">fit_setting_contacts</span>(</span>
-<span id="cb31-2"><a href=""></a>  <span class="at">contact_data_list =</span> polymod_contact_data,</span>
-<span id="cb31-3"><a href=""></a>  <span class="at">population =</span> polymod_survey_data</span>
-<span id="cb31-4"><a href=""></a>  )</span>
-<span id="cb31-5"><a href=""></a></span>
-<span id="cb31-6"><a href=""></a><span class="fu">str</span>(setting_models)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a>setting_models <span class="ot">&lt;-</span> <span class="fu">fit_setting_contacts</span>(</span>
+<span id="cb36-2"><a href=""></a>  <span class="at">contact_data_list =</span> polymod_contact_data,</span>
+<span id="cb36-3"><a href=""></a>  <span class="at">population =</span> polymod_survey_data</span>
+<span id="cb36-4"><a href=""></a>  )</span>
+<span id="cb36-5"><a href=""></a></span>
+<span id="cb36-6"><a href=""></a><span class="fu">str</span>(setting_models)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 4
  $ home  :List of 54
@@ -3164,37 +3226,37 @@ c_{ij} = \beta_0 + \beta_1(|i-j|) + &amp;\beta_2(|i-j|^2) + \beta_3(i\times j) +
 <section id="alt-approach-to-conmat-model-3" class="slide level2">
 <h2>Alt approach to conmat model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a>synthetic_settings_5y_subiaco <span class="ot">&lt;-</span> <span class="fu">predict_setting_contacts</span>(</span>
-<span id="cb33-2"><a href=""></a>  <span class="at">population =</span> subiaco_age_pop,</span>
-<span id="cb33-3"><a href=""></a>  <span class="at">contact_model =</span> setting_models,</span>
-<span id="cb33-4"><a href=""></a>  <span class="at">age_breaks =</span> <span class="fu">c</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">85</span>, <span class="at">by =</span> <span class="dv">5</span>), <span class="cn">Inf</span>)</span>
-<span id="cb33-5"><a href=""></a>  )</span>
-<span id="cb33-6"><a href=""></a></span>
-<span id="cb33-7"><a href=""></a>synthetic_settings_5y_subiaco</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href=""></a>synthetic_settings_5y_subiaco <span class="ot">&lt;-</span> <span class="fu">predict_setting_contacts</span>(</span>
+<span id="cb38-2"><a href=""></a>  <span class="at">population =</span> subiaco_age_pop,</span>
+<span id="cb38-3"><a href=""></a>  <span class="at">contact_model =</span> setting_models,</span>
+<span id="cb38-4"><a href=""></a>  <span class="at">age_breaks =</span> <span class="fu">c</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">85</span>, <span class="at">by =</span> <span class="dv">5</span>), <span class="cn">Inf</span>)</span>
+<span id="cb38-5"><a href=""></a>  )</span>
+<span id="cb38-6"><a href=""></a></span>
+<span id="cb38-7"><a href=""></a>synthetic_settings_5y_subiaco</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="in-code-how-does-the-model-work" class="slide level2">
 <h2>In code: How does the model work?</h2>
 <p>(simplified)</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a>mgcv<span class="sc">::</span><span class="fu">bam</span>(</span>
-<span id="cb34-2"><a href=""></a>  <span class="at">formula =</span> contacts <span class="sc">~</span></span>
-<span id="cb34-3"><a href=""></a>    <span class="co"># deviation of contact age distribution from population age distribution</span></span>
-<span id="cb34-4"><a href=""></a>    <span class="fu">s</span>(age_to) <span class="sc">+</span></span>
-<span id="cb34-5"><a href=""></a>    <span class="co"># number of contacts by age</span></span>
-<span id="cb34-6"><a href=""></a>    <span class="fu">s</span>(age_from) <span class="sc">+</span></span>
-<span id="cb34-7"><a href=""></a>    <span class="co"># intergenerational contact patterns - enables the off-diagonals</span></span>
-<span id="cb34-8"><a href=""></a>    <span class="fu">s</span>(<span class="fu">abs</span>(age_from <span class="sc">-</span> age_to)) <span class="sc">+</span></span>
-<span id="cb34-9"><a href=""></a>    <span class="co"># interaction between intergenerational patterns and age_from, to remove</span></span>
-<span id="cb34-10"><a href=""></a>    <span class="co"># ridge for some ages and settings</span></span>
-<span id="cb34-11"><a href=""></a>    <span class="fu">s</span>(<span class="fu">abs</span>(age_from <span class="sc">-</span> age_to), age_from) <span class="sc">+</span></span>
-<span id="cb34-12"><a href=""></a>    <span class="co"># probabilities of both attending (any) school/work</span></span>
-<span id="cb34-13"><a href=""></a>    school_probability <span class="sc">+</span></span>
-<span id="cb34-14"><a href=""></a>    work_probability <span class="sc">+</span></span>
-<span id="cb34-15"><a href=""></a>    <span class="fu">offset</span>(school_popn<span class="sc">/</span>work_popn),</span>
-<span id="cb34-16"><a href=""></a>    <span class="at">family =</span> stats<span class="sc">::</span>poisson,</span>
-<span id="cb34-17"><a href=""></a>    <span class="co"># </span><span class="al">NOTE</span><span class="co">: the offset of participants allows us to get the rate per person</span></span>
-<span id="cb34-18"><a href=""></a>    <span class="at">offset =</span> <span class="fu">log</span>(participants)</span>
-<span id="cb34-19"><a href=""></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a>mgcv<span class="sc">::</span><span class="fu">bam</span>(</span>
+<span id="cb39-2"><a href=""></a>  <span class="at">formula =</span> contacts <span class="sc">~</span></span>
+<span id="cb39-3"><a href=""></a>    <span class="co"># deviation of contact age distribution from population age distribution</span></span>
+<span id="cb39-4"><a href=""></a>    <span class="fu">s</span>(age_to) <span class="sc">+</span></span>
+<span id="cb39-5"><a href=""></a>    <span class="co"># number of contacts by age</span></span>
+<span id="cb39-6"><a href=""></a>    <span class="fu">s</span>(age_from) <span class="sc">+</span></span>
+<span id="cb39-7"><a href=""></a>    <span class="co"># intergenerational contact patterns - enables the off-diagonals</span></span>
+<span id="cb39-8"><a href=""></a>    <span class="fu">s</span>(<span class="fu">abs</span>(age_from <span class="sc">-</span> age_to)) <span class="sc">+</span></span>
+<span id="cb39-9"><a href=""></a>    <span class="co"># interaction between intergenerational patterns and age_from, to remove</span></span>
+<span id="cb39-10"><a href=""></a>    <span class="co"># ridge for some ages and settings</span></span>
+<span id="cb39-11"><a href=""></a>    <span class="fu">s</span>(<span class="fu">abs</span>(age_from <span class="sc">-</span> age_to), age_from) <span class="sc">+</span></span>
+<span id="cb39-12"><a href=""></a>    <span class="co"># probabilities of both attending (any) school/work</span></span>
+<span id="cb39-13"><a href=""></a>    school_probability <span class="sc">+</span></span>
+<span id="cb39-14"><a href=""></a>    work_probability <span class="sc">+</span></span>
+<span id="cb39-15"><a href=""></a>    <span class="fu">offset</span>(school_popn<span class="sc">/</span>work_popn),</span>
+<span id="cb39-16"><a href=""></a>    <span class="at">family =</span> stats<span class="sc">::</span>poisson,</span>
+<span id="cb39-17"><a href=""></a>    <span class="co"># </span><span class="al">NOTE</span><span class="co">: the offset of participants allows us to get the rate per person</span></span>
+<span id="cb39-18"><a href=""></a>    <span class="at">offset =</span> <span class="fu">log</span>(participants)</span>
+<span id="cb39-19"><a href=""></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section></section>
 <section id="this-is-the-last-slide." class="title-slide slide level1 center">
 <h1><strong>This is the last slide.</strong></h1>
