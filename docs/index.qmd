@@ -10,7 +10,7 @@ format:
     incremental: true
     slide-number: c
     show-slide-number: all
-    footer: "@njtierney"
+    footer: "njtierney.github.io/lshtm-2024/"
     chalkboard:
       boardmarker-width: 5
       buttons: true
