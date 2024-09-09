@@ -1,0 +1,1390 @@
+---
+title: "**Extendable** projection of social contact matrices"
+subtitle: "London School of Hygiene and Tropical Medicine"
+date: "2024-09-09"
+author: "Nicholas Tierney"
+institute: ~~Telethon~~ The Kids Institute
+format: 
+  revealjs:
+    theme: [simple, extra.scss]
+    incremental: true
+    slide-number: c
+    show-slide-number: all
+    footer: "@njtierney"
+    chalkboard:
+      boardmarker-width: 5
+      buttons: true
+editor: visual
+execute: 
+  echo: false
+  warning: false
+  cache: true
+---
+
+```{r}
+#| label: library
+#| include: false
+library(tidyverse)
+library(knitr)
+library(conmat)
+library(colorspace)
+library(naniar)
+library(visdat)
+library(brolgar)
+library(icons)
+```
+
+```{r}
+#| label: source-r-files
+#| echo: false
+#| message: false
+#| output: false
+lapply(list.files(here::here("R"), full.names = TRUE), source)
+```
+
+```{r}
+#| label: helpers
+#| include: false
+
+icons_fa <- icons::fontawesome
+icon_mastodon <- icon_style(icons_fa$brands$mastodon, fill = "#f0a800")
+icon_twitter <- icon_style(icons_fa$brands$twitter, fill = "#f0a800")
+icon_globe <- icon_style(icons_fa$solid$globe, fill = "#f0a800")
+icon_box <- icon_style(icons_fa$solid$`box-open`, fill = "#f0a800")
+icon_link <- icon_style(icons_fa$solid$link, fill = "#f0a800")
+icon_bullhorn <- icon_style(icons_fa$solid$bullhorn, fill = "#f0a800")
+# icon_twitter <- icon_style(icons_fa$brands$twitter, fill = "#f0a800")
+icon_github <- icon_style(icons_fa$brands$github, fill = "#f0a800")
+icon_plane <- icon_style(icons_fa$solid$`paper-plane`, fill = "#f0a800")
+
+theme_set(
+  theme_grey(base_size = 16) +
+  theme(
+    legend.position = "bottom",
+    plot.background = element_rect(fill = "transparent"),
+    legend.background = element_rect(fill = "transparent")
+  )
+)
+
+# **ni**ck's **pa**lette
+nipa <- list(red = "#c03018",
+             orange = "#f0a800",
+             green = "#609048",
+             purple = "#484878",
+             light_purple = "#A3A3BB",
+             light_green = "#AFC7A3",
+             light_orange = "#F7D37F",
+             light_red = "#DF978B",
+             pale_purple = "#ECECF1",
+             pale_green = "#D7E3D1",
+             pale_orange = "#FBE9BF",
+             pale_red = "#EFCBC4")
+
+```
+
+
+## Background: Undergraduate
+
+::: columns
+::: {.column width="45%"}
+
+Undergraduate in Psychology
+
+- Statistics
+- Experiment Design
+- Cognitive Theory
+- Neurology
+- Humans
+
+::: 
+
+::: {.column width="45%"}
+
+```{r psych, out.width = "80%"}
+include_graphics("imgs/psy_brain.png")
+```
+
+:::
+
+
+## Background: Honours
+
+::: columns
+::: {.column width="45%"}
+
+Psychophysics: illusory contours in 3D
+
+```{r phil-grove, out.width = "50%"}
+include_graphics("imgs/phil-grove.jpeg")
+```
+
+Phil Grove
+:::
+
+::: {.column width="45%"}
+```{r kanizsa-triangle}
+include_graphics("imgs/kanizsa-triangle.png")
+```
+
+:::
+
+## Background: Undergraduate
+
+::: columns
+::: {.column width="45%"}
+```{r christina-lee, out.width = "50%"}
+include_graphics("imgs/christina-lee.jpeg")
+```
+
+Christina Lee
+
+:::
+
+::: columns
+::: {.column width="45%"}
+> If every psychologist in the world delivered gold standard smoking cessation therapy, the rate of smoking would still increase. You need to change policy to make change. To make effective policy, you need to have good data, and do good statistics.
+
+:::
+
+## Background: PhD
+
+::: columns
+::: {.column width="45%"}
+
+- "Ah, statistics, everything is black and white!
+- "There's always an answer"
+- "data in, answer out"
+
+:::
+
+
+::: {.column width="45%"}
+
+```{r bw-mountains}
+include_graphics("imgs/bw-mountains.jpg")
+```
+
+:::
+
+:::
+<!-- I started a PhD in statistics at QUT, under (now distinguished) Professor Kerrie Mengersen, Looking at people's health over time. -->
+
+<!-- - There were several things that I noticed: -->
+<!--   - There were equations, but not as many clear-cut, black and white answers -->
+  
+
+
+## Background: PhD
+
+.pull-left.large[
+
+- Data is really messy
+- Missing values are frustrating
+- How to Explore data?
+
+]
+
+.pull-right[
+```{r explorer}
+include_graphics("imgs/explorer.jpg")
+```
+
+]
+
+
+  
+
+
+## Background: PhD - But in psych
+
+.pull-left.large[
+- Focus on experiment design
+- No focus on exploring data
+- Exploring data felt...wrong?
+- But it was so critical.
+]
+
+.pull-right[
+```{r sound-barrier}
+include_graphics("imgs/sound-barrier.jpg")
+```
+
+]
+
+
+
+
+## (My personal) motivation
+
+.large[
+- A lot of research in new statistical methods - imputation, inference, prediction
+- Not much research on how we explore our data, and the methods that we use to do this.
+]
+
+
+
+## (My personal) motivation
+
+.pull-left[
+```{r bw-bridge}
+include_graphics("imgs/bw-bridge.jpg")
+```
+
+]
+
+.pull-right.large[
+  > Focus on building a bridge across a river. Less focus on **how** it is built, and the **tools** used.
+]
+
+???
+
+- I became very interested in how we explore our data - exploratory data analysis.
+
+
+class: inverse, middle, center
+
+.huge[
+My research:
+
+Design and improve tools for (exploratory) data analysis
+]
+
+
+    
+# EDA: Exploratory Data Analysis
+
+.large[
+> ...EDA is an approach to analyzing data sets to summarize their main characteristics, often with visual methods. (Wikipedia)
+
+John Tukey, Frederick Mosteller, Bill Cleveland, Dianne Cook, Heike Hoffman, Rob Hyndman, Hadley Wickham
+]
+
+
+
+# EDA: Why it's worth it
+
+--
+
+```{r dino-saurus}
+include_graphics("gifs/dino-saurus.gif")
+```
+
+-- From ["Same Stats, Different Graphs: Generating Datasets with Varied Appearance and Identical Statistics through Simulated Annealing"](https://www.autodeskresearch.com/publications/samestats)
+
+
+class: inverse, middle, center
+
+
+```{r learn-more, echo = FALSE, out.width = "70%"}
+include_graphics("imgs/hex-visdat-and-naniar.png")
+```
+
+.pull-left[
+.center[
+.hugew[
+[visdat.njtierney.com](https://visdat.njtierney.com)
+]
+]
+]
+
+.pull-right[
+.center[
+.hugew[
+[naniar.njtierney.com](https://naniar.njtierney.com)
+]
+]
+]
+
+
+
+## `visdat`
+
+.pull-left[
+```{r show-visdat-hex}
+include_graphics("imgs/hex-visdat.png")
+```
+]
+
+.pull-right[
+
+[![rOpenSci Badge](https://badges.ropensci.org/87_status.svg)](https://github.com/ropensci/onboarding/issues/87)[![JOSS status](http://joss.theoj.org/papers/c85f57adbc565b064fb4bfc9b59a1b2a/status.svg)](http://joss.theoj.org/papers/c85f57adbc565b064fb4bfc9b59a1b2a)[![DOI](https://zenodo.org/badge/50553382.svg)](https://zenodo.org/badge/latestdoi/50553382)
+
+> published under "visdat: Visualising Whole Data Frames" in the Journal of Open Source Software
+
+]
+
+## `visdat::vis_dat(airquality)`
+
+```{r show-visdat, fig.height = 3.5, fig.width = 8, out.width = "150%"}
+vis_dat(airquality)
+```
+
+
+
+
+## `visdat::vis_miss(airquality)`
+
+```{r show-vis-miss, fig.height = 3.5, fig.width = 8, out.width = "150%"}
+vis_miss(airquality)
+```
+
+
+
+
+## `naniar`
+
+.left-code[
+```{r show-naniar-hex}
+include_graphics("imgs/hex-naniar.png")
+```
+]
+
+.right-plot.large[
+  
+Tierney, NJ. Cook, D. "Expanding tidy data principles to facilitate missing data exploration, visualization and assessment of imputations." [[Pre-print](https://arxiv.org/abs/1809.02264)]
+
+]
+
+
+
+## `naniar::gg_miss_var(airquality)`
+
+```{r gg-miss-var, fig.height = 3.5, fig.width = 8, out.width = "150%"}
+gg_miss_var(airquality)
+```
+
+
+
+
+## `naniar::gg_miss_upset(airquality)`
+
+```{r gg-miss-upset, fig.height = 3.5, fig.width = 8, out.width = "150%"}
+gg_miss_upset(airquality)
+```
+
+
+## What this talk is about
+
+-   **How** I wrote software for infectious disease modelling
+
+-   Touch on the **overall** approach for methods. A large portion of my role was on software and interface design.
+
+-   **Why** we needed our own method + software
+
+-   Discuss **applications** of contact matrices
+
+-   Advocate for **software design + statistical thinking**: *the way of the research software engineer*.
+
+## The story so far
+
+-   **2008-2012**: Undergrad + honours in Psychology \@ UQ
+
+-   **2013-2017**: PhD Statistics \@ QUT
+
+    -   Exploratory Data Analysis (EDA)
+    -   Bayesian / Geospatial statistics / Optimal placement
+
+-   **2018 - 2020**: Research Fellow / Lecturer \@ Monash
+
+    -   Design and improve tools for EDA
+
+-   **2021 - 2024**: **Research Software Engineer** \@ Telethon Kids Institute
+
+    -   Maintain and design tools for data analysis
+
+## Define: Research Software Engineer
+
+> A Research Software Engineer (RSE) combines professional software engineering expertise with an intimate understanding of research.
+
+-- (from https://society-rse.org/about/)
+
+## What sorts of things does an RSE do?
+
+-   Create software to **solve research problems**
+
+-   Develop tools that **abstract the right components** to facilitate research
+
+-   Help researchers to **find and learn** good tools
+
+-   Support researchers with (computational) reproducibility
+
+::: aside
+(adapted from Heidi Seibold's [UseR2021 Keynote talk](https://docs.google.com/presentation/d/1XQc2U2X8hiK43UzUi9IwvsvULxhVy0WzWSa_Kt4ZJv4/view#slide=id.gdbfb32d486_0_448))
+:::
+
+::: notes
+I bring this up because I feel a bit of a need to explain my background to help explain the context of what I do
+:::
+
+## `visdat::vis_dat(airquality)`
+
+```{r}
+#| label: show-visdat
+#| fig-height: 3.5
+#| fig-width: 8
+vis_dat(airquality)
+```
+
+## `naniar::gg_miss_upset(airquality)`
+
+```{r}
+#| label: gg-miss-upset
+#| fig-height: 3.5
+#| fig-width: 8
+gg_miss_upset(airquality)
+```
+
+## `brolgar` - take spaghetti
+
+```{r}
+#| label: gg-brolgar
+ggplot(heights,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_line()
+```
+
+## `brolgar` - spread spaghetti
+
+```{r}
+#| label: gg-brolgar-spread
+ggplot(heights,
+       aes(x = year,
+           y = height_cm,
+           group = country)) + 
+  geom_line() + 
+  facet_strata(along = -year)
+```
+
+::: notes
+I'm a research software engineer, I help translate research methods into open source research software. One of my primary tasks is Extending/maintaining `greta` for statistical computing. I also work on creating and extending other software as needed for our team. Optional bits: PhD statistics - emphasis on frustration developing workflows R packages to facilitate exploratory data analysis Overviews, missing data, longitudinal data
+:::
+
+##  {background-image="images/greta-logo-background.png" background-size="contain"}
+
+<!-- Professor Nick Golding -->
+
+<!-- [greta-stats.org](https://www.greta-stats.org) -->
+
+## greta is R code
+
+::: columns
+::: {.column width="45%"}
+**stan**
+
+```         
+data {
+  real alpha;
+  real beta;
+  real<lower=0> sigma2;
+  int<lower=0> J;
+  array[J] int y;
+  vector[J] Z;
+  array[J] int n;
+}
+transformed data {
+  real<lower=0> sigma;
+  sigma = sqrt(sigma2);
+}
+parameters {
+  real theta1;
+  real theta2;
+  vector[J] X;
+}
+model {
+  array[J] real p;
+  theta1 ~ normal(0, 32); // 32^2 = 1024 
+  theta2 ~ normal(0, 32);
+  X ~ normal(alpha + beta * Z, sigma);
+  y ~ binomial_logit(n, theta1 + theta2 * X);
+}
+```
+:::
+
+::: {.column width="55%"}
+**JAGS**
+
+```         
+for(j in 1 : J) {
+   y[j] ~ dbin(p[j], n[j])
+   logit(p[j]) <- theta[1] + theta[2] * X[j]
+   X[j] ~ dnorm(mu[j], tau)
+   mu[j] <- alpha + beta * Z[j]
+}
+theta[1] ~ dnorm(0.0, 0.001)
+theta[2] ~ dnorm(0.0, 0.001)
+```
+
+**greta**
+
+``` r
+theta <- normal(0, 32, dim = 2)
+mu <- alpha + beta * Z
+X <- normal(mu, sigma)
+p <- ilogit(theta[1] + theta[2] * X)
+distribution(y) <- binomial(n, p)
+```
+:::
+:::
+
+# google tensorflow
+
+::: columns
+::: {.column width="45%"}
+-   automatic differentiation
+-   efficient linear algebra
+-   highly parallel
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: tf-examples
+include_graphics(here::here("docs/images/tf-examples.png"))
+```
+:::
+:::
+
+## extendable
+
+```{r}
+#| label: extendable
+include_graphics(here::here("docs/images/greta-extendable.png"))
+```
+
+# `greta.gp`
+
+> Extends `greta` to let you define Gaussian processes as part of your model. It provides a syntax to create and combine GP kernels, and use them to define either full rank or sparse Gaussian processes.
+
+::: columns
+::: {.column width="60%"}
+``` r
+# kernel & GP
+kernel <- rbf(rbf_len, rbf_var) + 
+            bias(1)
+f <- gp(x, kernel)
+# likelihood
+distribution(y) <- normal(f, obs_sd)
+# prediction
+f_plot <- project(f, x_plot)
+```
+:::
+
+::: {.column width="38%"}
+```{r extendable-greta-gp}
+include_graphics(here::here("docs/images/greta-extendable-gp.png"))
+```
+:::
+:::
+
+## Joining an infectious disease team
+
+-   August, 2021: Australia is working on the plan to reopen, part of "The Doherty Report"
+
+-   They need more hands to help with data analysis and software development
+
+-   I joined to assist for \~4 months
+
+-   Helped develop pipelines + software for disease modelling, establish code base for people to contribute
+
+# Soliloquy
+
+::: notes
+I wanted to take a moment to talk about the dedication of this group of people. They worked tirelessly, and had been working tirelessly since March 2020. There were a heap of tight deadlines, and massive amounts of work that they graciously took on. It was a massive honour to work with all of these people.
+:::
+
+## Social spread of disease
+
+-   Diseases like COVID19 and Influenza spread through face to face social contact
+
+::: notes
+-   I think we're all familiar enough with COVID to know what I mean here.
+:::
+
+-   Describe which 3 people had contact:
+
+    -   **James** has had contact with **Luke**
+
+    -   **Nick** has had contact with **neither**
+
+::: notes
+So say we have 3 people and we want to describe who have had face to face contact in the past week. Let's take myself and my two brothers. They're both in Brisbane and I'm not, so I haven't seen them. We might say:
+:::
+
+## Example: visually
+
+```{r}
+name_vec <- c("James", "Luke", "Nick")
+df_contact <- expand_grid(
+  name_from = name_vec,
+  name_to = name_vec
+) %>% 
+  mutate(
+    contact = as.logical(c(NA, 1, 0,
+                           1, NA, 0,
+                           0, 0, NA)),
+    contact_num = c(NA, 6, 0,
+                    6, NA, 0,
+                    0, 0, NA),
+    contact_num_age = c(10, 6, 0,
+                        6, 10, 0,
+                        0, 0, 10),
+    )
+
+ggplot(df_contact,
+       aes(x = name_from,
+           y = name_to,
+           fill = contact)) + 
+  geom_tile(colour = "black") +
+  scale_fill_manual(values = c("grey85", "grey20"),
+                    na.value = "white") +
+  theme_minimal(base_size = 18) +
+  theme(aspect.ratio = 1,
+        legend.position = "top")
+```
+
+::: notes
+This shows whether people had contact, yes or no. We can see that everyone had contact with one another except for Nick, and with Nick. Note that we could change this from something logical - "did they have contact" to "how many times did you have contact?"
+:::
+
+## Example: matrix
+
+```{r}
+#| label: example-matrix
+#| attr-output: 'style="font-size:170%;"'
+
+df_mat <- df_contact %>% 
+  select(-contact_num,
+         -contact_num_age) %>% 
+  pivot_wider(
+    names_from = name_from,
+    values_from = contact
+  ) %>% 
+  select(-name_to) %>% 
+  as.matrix()
+
+colnames(df_mat) <- unique(df_contact$name_from)
+rownames(df_mat) <- unique(df_contact$name_from)
+df_mat
+
+```
+
+## Logical --\> Numeric
+
+```{r}
+ggplot(df_contact,
+       aes(x = name_from,
+           y = name_to,
+           fill = contact_num)) + 
+  geom_tile(colour = "black") +
+  scale_fill_continuous_sequential(palette = "Purples 2",
+                                   na.value = "black") +
+  theme_minimal(base_size = 18) +
+  labs(fill = "# Contacts") + 
+  theme(aspect.ratio = 1)
+```
+
+::: notes
+So now we have not just, "Did you have contact?", but, "How many times did you have contact?" Instead of individual people, we could change this to age groups.
+:::
+
+## People --\> Age groups
+
+```{r}
+#| echo: false
+df_contact_ages <- df_contact %>% 
+  mutate(
+    across(
+      .cols = c(name_from, name_to),
+      .fns = ~case_when(
+        .x == "James" ~ "0-9",
+        .x == "Luke" ~ "10-19",
+        .x == "Nick" ~ "20-29",
+      )
+    )
+  ) %>% 
+  rename(
+    age_from = name_from,
+    age_to = name_to
+  )
+
+ggplot(df_contact_ages,
+       aes(x = age_from,
+           y = age_to,
+           fill = contact_num_age)) + 
+  geom_tile(colour = "black") +
+  scale_fill_continuous_sequential(palette = "Greens 2") +
+  theme_minimal(base_size = 18) +
+  labs(fill = "# Contacts") + 
+  theme(aspect.ratio = 1)
+```
+
+## What do you do with a contact matrix?
+
+- If we know **the number of times people have contact**, we can model:
+    - **Which age groups** might spread COVID
+    - **How many** COVID cases would get transmitted
+    - How vaccination **reduces** transmission
+- Do the above for **different areas** in Australia
+
+## Do we know how much contact people have?
+
+-   We don't. Well, not in Australia. Yet.
+
+-   You need to conduct a survey where people **diary** the **amount** and **manner** of **daily** contacts they have.
+
+-   [Mossong et al](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0050074) have this for 8 countries in Europe
+
+-   Referred to as the **POLYMOD** study
+
+::: notes
+-   So we have a pretty good idea of the amount of contact people have in Europe.
+:::
+
+## POLYMOD
+
+Published in 2008, Mossong et. al undertook a contact diary study of 7290 participants across Europe.
+
+_It remains the most widely cited contact diary study_.
+
+![](images/mossong-combined.png)
+
+## Method of Mossong et al
+
+-   Random weekday: record every person in contact with.
+-   Physical contact:
+    -   skin-to-skin contact (kiss or handshake)
+-   Non-physical contact:
+    -   two-way conversation with 3+ words in physical presence of a person
+
+## Method of Mossong et al
+
+-   Participants provide info on:
+    -   age and sex of each contact person
+    -   location (home, work, school, etc)
+    -   time spent together
+    -   frequency of usual contacts with this individual
+
+## Contact surveys are 💰 💰 💰
+
+-   Part of why we don't have them in Australia
+-   Can we get a contact matrix for a country not on the list?
+-   We need to have a best guess from existing surveys
+
+## Synthetic contact matrices
+
+-   Pre-existing statistical methodologies project empirical contact matrices to new countries.
+-   New projected contact matrices: "synthetic contact matrices"
+-   Use existing contact surveys (e.g., **POLYMOD**)
+-   Use setting-specific survey data on household, school, classroom, and workplace composition
+-   Combine with empirical data on contact patterns in Europe using statistical models
+
+## Prem et al 
+
+::: {.columns}
+::: {.column width='50%'}
+![](images/prem-paper-fig.png){fig-align="center"}
+:::
+::: {.column width='50%'}
+-   One of the most widely used approaches to synthetic contact matrices
+-   Extensively applied across infectious diseases applications
+-   Initially provided 152 matrices for 152 countries (177 later in 2020)
+:::
+:::
+
+## Creating synthetic contact matrices
+
+::: {.columns}
+::: {.column width='70%'}
+- Prem et. al formed a model that predicts the **number of contacts** based on the **age of participants** in different **settings** (Home, Work, School, Other)
+- $\text{n_contacts} \sim age_{ij} + setting_{k}$
+- This model then allows for prediction to settings that are outside the original POLYMOD countries.
+- They provide **new contact matrices** for a **given country**
+:::
+::: {.column width='30%'}
+![](images/prem-contact-mat.png){fig-align="center"}
+:::
+:::
+
+
+##  {background-image="images/prem-dir-mats.png" background-size="contain"}
+
+##  {background-image="images/prem-spreadsheet.png" background-size="contain"}
+
+::: notes
+**image of spreadsheet booklet of contact matrices**
+
+The main issue with this is that we don't have much control over the outputs.
+
+And maybe that doesn't matter to you if you just need to look at the contact matrices for a given country.
+
+But what we needed to do is get contact matrices for a given age population structure.
+:::
+
+## Populations are different within a country
+
+```{r}
+adelaide_perth <- combine_abs_two_age_distributions(
+     lga_1 = "Adelaide (C)",
+     lga_2 = "Perth (C)"
+)
+
+plot_two_abs_distributions(adelaide_perth)
+```
+
+## Populations are different within a country
+
+```{r}
+broome_perth <- combine_abs_two_age_distributions(
+     lga_1 = "Broome (S)",
+     lga_2 = "Perth (C)"
+)
+
+plot_two_abs_distributions(broome_perth)
+```
+
+## What we want
+
+-   We want to be able use a **population age distribution**
+
+::: {.fragment}
+```{r}
+#| label: subiaco
+#| echo: true
+subiaco <- abs_age_lga("Subiaco (C)")
+subiaco
+```
+:::
+
+## What we want
+
+-   Input **population age distribution** and get out a contact matrix.
+
+::: {.fragment}
+```{r}
+#| eval: false
+#| echo: true
+
+extrapolate_from_data(
+  population = subiaco
+)
+```
+:::
+
+## How do we extend Prem's method?
+
+-   [Code is provided](https://github.com/kieshaprem/synthetic-contact-matrices), but a few key issues:
+
+    -   It was code **not** written **for reuse** (code vs software)
+
+        -   No interface to specify a given country/region
+
+        -   Unclear which code matches which methods
+        -   Australia in original 152 countries, not in updated estimates provided in 2020.
+
+
+## An alternative approach
+
+- We developed an *open-source* approach
+- The R package `conmat`
+- It can be applied to any input population (big or small).
+
+- [github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
+
+- install using:
+
+::: {.fragment}
+```{r}
+#| eval: false
+#| echo: true
+remotes::install_github("idem-lab/conmat")
+```
+::: 
+
+## Model details
+
+- These models don't have much to go on. They are trained on the number of contacts between age groups $i$ and $j$:
+
+::: {.fragment}
+$$\begin{aligned}
+c_{ij} = \beta_0 + \beta_1(|i-j|) + &\beta_2(|i-j|^2) + \beta_3(i\times j) + \beta_4(i+j) +\\ &\beta_5\max(i, j) + \beta_6\min(i, j)
+\end{aligned}
+$$
+:::
+
+::: {.fragment .callout-tip}
+We want to fit this as a generalised additive model, so _actually_ we have splines on these terms to satisfy the smoothness requirements. This is very similar to the approach by Prem et. al who perform post-hoc smoothing of the parameters after MCMC.
+:::
+
+## Model details
+
+* All that is needed to make predictions is the number of individuals in different age groups. 
+* This is easily obtainable information from most statistics bureaus/governments.
+
+## Data sources {.smaller}
+
+::: {.columns}
+::: {.column width='50%'}
+The `socialmixr` package has this information for most countries:
+
+```{r}
+#| echo: true
+socialmixr::wpp_age("Australia", 2015)
+```
+:::
+::: {.column width='50%' .fragment}
+And for inside Australia, `conmat` provides some ABS functions:
+
+```{r}
+#| echo: true
+conmat::abs_age_lga("Subiaco (C)")
+```
+:::
+:::
+
+
+## Demonstration of conmat
+
+```{r}
+#| echo: true
+#| label: get-subiaco
+library(conmat)
+subiaco <- abs_age_lga("Subiaco (C)")
+subiaco
+```
+
+## Extrapolate to a new population
+
+```{r}
+#| label: extrapolate-subiaco
+#| echo: true
+synthetic_subiaco <- extrapolate_polymod(
+ population = subiaco,
+ age_breaks = c(seq(0, 80, by = 5), Inf)
+)
+synthetic_subiaco
+```
+
+## Contact matrix: Subiaco home
+
+```{r}
+#| label: plot-matrix-subiaco-home
+#| echo: true
+autoplot(synthetic_subiaco$home)
+```
+
+## Contact matrix: Subiaco work
+
+```{r}
+#| label: plot-matrix-subiaco-work
+#| echo: true
+autoplot(synthetic_subiaco$work)
+```
+
+## Contact matrix: Subiaco all
+
+```{r}
+#| label: plot-matrix-subiaco-all
+#| echo: true
+autoplot(synthetic_subiaco)
+```
+
+```{r}
+#| message: false
+#| warning: false
+oz_pop <- abs_pop_age_lga_2020 %>%
+    select(
+      state,
+      age_group,
+      year,
+      population
+    ) %>%
+    mutate(age_group = readr::parse_number(as.character(age_group))) %>%
+    summarise(population = sum(population),
+              .by = c(year, age_group)) %>% 
+     as_conmat_population(
+          age = age_group,
+          population = population
+     )
+```
+
+```{r}
+#| label: polymod-extrapolate
+synthetic_polymod_oz <- extrapolate_polymod(
+ population = oz_pop,
+ age_breaks = c(seq(0, 80, by = 5), Inf)
+)
+```
+
+## Contact matrix: Australia
+
+```{r}
+#| label: plot-matrix-polymod
+#| echo: true
+autoplot(synthetic_polymod_oz$home)
+```
+
+## Australia vs Subiaco
+
+```{r}
+mat_diff <- synthetic_polymod_oz$home - synthetic_subiaco$home
+autoplot(mat_diff) + 
+     scale_fill_binned_diverging(
+    ) + 
+     labs(title = "Different in contacts",
+          fill = "Contact difference")
+```
+
+# Thoughts on **design**, **software** vs **code**, and **workflows**
+
+## Challenges in **Design**
+
+-   Model fitting is fixed and rigid
+    -   Although there are arguments for `age_break`
+    -   You cannot change the model formula (yet)
+    -   Easy-to-use at **cost of flexibility**
+
+::: {.fragment}
+```{r}
+#| eval: false
+#| echo: true
+synthetic_subiaco <- extrapolate_polymod(
+ population = subiaco,
+ age_breaks = c(seq(0, 75, by = 5), Inf)
+)
+```
+::: 
+
+## Comment: **Software** vs **code**
+
+-  It is great that Prem et al provided their estimates, and their code
+- **Code** describes **how** you did something
+- **Software** is designed for **reuse**
+-   [Github Issues are very useful](https://github.com/njtierney/conmat/issues?q=is%3Aissue+is%3Aclosed)
+-   Extra contributions can be implemented as [pull requests](https://github.com/njtierney/conmat/pulls?page=2&q=is%3Apr+is%3Aclosed) which can be tested with GH actions
+
+## Comment: **Workflows**
+
+-   Also worked on a workflow for determining the impact of ["Test, Trace, Isolate, Quarantine" (TTIQ)](https://github.com/njtierney/ttiq-simulation)
+-   Used [targets](https://books.ropensci.org/targets/) R package to manage workflow - [file](https://github.com/njtierney/ttiq-simulation/blob/master/_targets.R)
+-   Allowed for many people to contribute to same code base (although a learning curve)
+-   [Issues](https://github.com/njtierney/ttiq-simulation/issues?q=is%3Aissue+is%3Aclosed) helped facilitate task delivery/discussion
+-   [Pull requests helped isolate issues](https://github.com/njtierney/ttiq-simulation/pulls?q=is%3Apr+is%3Aclosed+sort%3Acreated-asc)
+-  [Used tests, very useful for plots](https://github.com/njtierney/ttiq-simulation/tree/master/tests/testthat) with [vdiffr](https://vdiffr.r-lib.org/) (**example**)
+
+
+# Circling back: why use `conmat`
+
+## Why should I use `conmat`? It's easy!
+
+```{r}
+#| echo: true
+world_data <- socialmixr::wpp_age()
+population <- age_population(
+    data = world_data,
+    location_col = country,
+    location = "Australia",
+    age_col = lower.age.limit,
+    year_col = year,
+    year = 2015
+)
+
+population
+```
+
+## Why should I use `conmat`?
+
+Getting a contact matrix is easy:
+
+
+```{r}
+#| cache: true
+#| echo: true
+contact_rates <- extrapolate_polymod(
+    population = population,
+    age_breaks = c(seq(0, 100, by = 5), Inf)
+)
+```
+
+## Why should I use `conmat`?
+
+```{r}
+#| echo: true
+contact_rates$home
+```
+
+## Why should I use `conmat`? You can use a custom population
+
+
+```{r}
+#| code-line-numbers: "1-6|8-15|17-20"
+#| echo: true
+flat_population_data <- tibble(
+    country = "flatland",
+    year = 2024,
+    population = 1000,
+    lower.age.limit = seq(0, 75, by=5)
+)
+
+flat_population <- age_population(
+    data = flat_population_data,
+    location_col = country,
+    location = "flatland",
+    age_col = lower.age.limit,
+    year_col = year,
+    year = 2024
+)
+
+flat_contact_rates <- extrapolate_polymod(
+    population = flat_population,
+    age_breaks = c(seq(0, 75, by=5), Inf)
+)
+```
+
+## Why should I use `conmat`? You can use a custom population
+
+```{r}
+#| echo: true
+flat_contact_rates$home
+```
+
+## Future Directions
+
+-   Implement **other social contact diaries** beyond POLYMOD
+-   Pre compute new matrices for countries/regions
+-   Allow for using **sub-yearly age groups**
+-   Validating against Prem and other methods
+-   Interface to changing GAM model terms or specify model
+
+## Conclusion
+
+* Contact matrices are frequently used in infectious diseases modelling
+* Standard Prem et. al matrices are not written for re-use
+* `conmat` provides an interface to easily generate and update models from any data source
+* Can integrate vaccination, calculate next generation matrices, and a handful of other features
+
+- It's available **right now**: [github.com/idem-lab/conmat](https://www.github.com/idem-lab/conmat)
+
+# Thanks
+
+-   Nick Golding
+-   Aarathy Babu
+-   Michael Lydeamore
+-   Chitra Saraswati
+
+# Learning more
+
+`r icon_box` [github.com/idem-lab/conmat](https://github.com/idem-lab/conmat)
+
+`r icon_bullhorn` [njtierney.github.io/conmat-tki-2024](njtierney.github.io/conmat-tki-2024)
+
+`r icon_globe` [njtierney.com](https://www.njtierney.com/)
+
+`r icon_mastodon` njtierney\@aus.social
+
+`r icon_github` njtierney
+
+`r icon_plane` nicholas.tierney\@gmail.com
+
+
+## {background-image="https://imgs.xkcd.com/comics/code_lifespan_2x.png" background-size="auto"}
+
+# **End.**
+
+# Extras
+
+
+## Create A Next Generation Matrix
+
+-   Once infected, a person can transmit an infectious disease to another, creating **generations** of infected individuals.
+-   We can define a matrix describing the **number of newly infected** individuals in age groups, for consecutive generations.
+-   This matrix is called a **next generation matrix** (NGM).
+
+## Create A Next Generation Matrix
+
+```{r}
+#| label: generate-ngm-subiaco
+#| echo: true
+ngm_subiaco <- generate_ngm(
+  x = synthetic_subiaco,
+  age_breaks = c(seq(0, 80, by = 5), Inf),
+  R_target = 1.5
+)
+ngm_subiaco
+```
+
+## Apply Vaccination
+
+-   Applies the effect of vaccination on the next generation of infections, to understand and describe the reduction of acquisition and transmission in each age group.
+
+-   Takes the following arguments:
+
+    -   `ngm` - a Next Generation Matrix
+    -   `data` - A data frame with location specifics
+    -   which columns are related to "coverage", "acquisition", and "transmission" in the `data` col
+
+## Example vaccination data
+
+```{r}
+#| label: vaccination-example-data
+#| echo: true
+vaccination_effect_example_data
+```
+
+::: notes
+I think they are the average vaccine efficacy (expressed as 1 minus the relative risk) over all vaccinated individuals in the population. I.e. we calculate an average form the number of people in that age group that have 1 dose, 2 doses, which brand, how long ago, etc.
+:::
+
+## Apply vaccination
+
+```{r}
+#| label: apply-vaccination-subiaco
+#| echo: true
+ngm_vacc_subiaco <- apply_vaccination(
+  ngm = ngm_subiaco,
+  data = vaccination_effect_example_data,
+  coverage_col = coverage,
+  acquisition_col = acquisition,
+  transmission_col = transmission
+)
+
+ngm_vacc_subiaco
+```
+
+## How does the model work?
+
+``` r
+fit_single_contact_model <- function(contact_data, population) {
+
+  # programatically add the offset term to the formula, so the model defines
+  # information about the setting, without us having to pass it through to the
+  # prediction data
+  formula_no_offset <- contacts ~
+    # deviation of contact age distribution from population age distribution
+    s(age_to) +
+    # number of contacts by age
+    s(age_from) +
+    # intergenerational contact patterns - enables the off-diagonals
+    s(abs(age_from - age_to)) +
+    # interaction between intergenerational patterns and age_from, to remove
+    # ridge for some ages and settings
+    s(abs(age_from - age_to), age_from) +
+    # probabilities of both attending (any) school/work
+    school_probability +
+    work_probability
+  
+  # choose the offset variable based on the setting
+  setting <- contact_data$setting[1]
+  offset_variable <- switch(
+    setting,
+    school = "log_contactable_population_school",
+    "log_contactable_population"
+  )
+  
+  # add multiplicative offset for population contactable, to enable
+  # extrapolation to new demographies
+  # in mgcv, this part of the offset gets used in prediction, which 
+  # is what we want. Those are the "contactable" parts, which we use
+  # to extrapolate to new demographics.
+  formula_offset <- sprintf("~. + offset(%s)", offset_variable)
+  formula <- update(formula_no_offset, formula_offset)
+  
+  # contact model for all locations together
+  contact_data %>%
+    add_modelling_features() %>%
+      # The modelling features added here are:
+        # the school and work offsets
+        # pop_age_to (interpolated population)
+        # `log_contactable_population_school`, and ` log_contactable_population`
+      population = population
+    mgcv::bam(
+      formula = formula,
+      family = stats::poisson,
+      # add number of participants as a multilpicative offset here rather than in
+      # the formula, so it is not needed for prediction,
+      # NOTE: the offset of participants allows us to get the rate per person
+      offset = log(participants),
+      data = .
+    )
+  
+}
+```
+
+## Alt approach to conmat model
+
+```{r}
+#| label: show-subiaco
+#| echo: true
+# fit a model
+library(conmat)
+subiaco_age_pop <- abs_age_lga("Subiaco (C)")
+subiaco_age_pop
+
+```
+
+## Alt approach to conmat model
+
+```{r}
+#| label: alt-fit
+#| echo: true
+polymod_contact_data <- get_polymod_setting_data()
+polymod_survey_data <- get_polymod_population()
+
+```
+
+## Alt approach to conmat model
+
+```{r}
+#| label: alt-fit-2
+#| echo: true
+setting_models <- fit_setting_contacts(
+  contact_data_list = polymod_contact_data,
+  population = polymod_survey_data
+  )
+
+str(setting_models)
+```
+
+## Alt approach to conmat model
+
+```{r}
+#| label: alt-fit-3
+#| echo: true
+synthetic_settings_5y_subiaco <- predict_setting_contacts(
+  population = subiaco_age_pop,
+  contact_model = setting_models,
+  age_breaks = c(seq(0, 85, by = 5), Inf)
+  )
+
+synthetic_settings_5y_subiaco
+```
+
+
+## In code: How does the model work?
+
+(simplified)
+
+``` r
+mgcv::bam(
+  formula = contacts ~
+    # deviation of contact age distribution from population age distribution
+    s(age_to) +
+    # number of contacts by age
+    s(age_from) +
+    # intergenerational contact patterns - enables the off-diagonals
+    s(abs(age_from - age_to)) +
+    # interaction between intergenerational patterns and age_from, to remove
+    # ridge for some ages and settings
+    s(abs(age_from - age_to), age_from) +
+    # probabilities of both attending (any) school/work
+    school_probability +
+    work_probability +
+    offset(school_popn/work_popn),
+    family = stats::poisson,
+    # NOTE: the offset of participants allows us to get the rate per person
+    offset = log(participants)
+    )
+```
+
+# **This is the last slide.**
+

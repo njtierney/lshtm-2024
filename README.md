@@ -1,5 +1,5 @@
 
-# Extendable projection of social contact matrices
+# A brief canvas of some research software + contact matrices
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -14,7 +14,7 @@ We have developed methods for creating synthetic contact matrices that uses exis
 
 In this talk, I demonstrate the use of the {conmat} package, showcasing how it can be used in epidemiological analyses. I will also discuss the process of creating the software and the user interface.
 
-# Slide available [here](https://njtierney.github.io/conmat-tki-2024/)
+# Slide available [here](njtierney.github.io/lshtm-2024/)
 
 # Bio
 
